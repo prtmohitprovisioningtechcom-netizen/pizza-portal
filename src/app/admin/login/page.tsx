@@ -45,13 +45,48 @@ export default function AdminLoginPage() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-[#faf8f5] p-4 font-body">
       <div className="w-full max-w-md rounded-3xl border border-neutral-200 bg-white p-8 shadow-xl">
-        <h1 className="font-logo text-3xl text-[#e60000]">Admin</h1>
-        {/* <p className="mt-2 text-sm text-neutral-600">
-          <code className="rounded bg-neutral-100 px-1">MYSQL_DATABASE</code> aur{" "}
-          <code className="rounded bg-neutral-100 px-1">JWT_SECRET</code>{" "}
-          <code className="rounded bg-neutral-100 px-1">.env</code> mein hon.
-          Naya setup: pehle <span className="font-semibold">Register</span> se admin banao (jab tak DB khali ho).
-        </p> */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-logo text-3xl text-[#e60000]">Admin Portal</h1>
+            <p className="mt-1 text-xs text-neutral-500">
+              {mode === "register"
+                ? "Naya admin account create karein"
+                : "Apne admin account me sign in karein"}
+            </p>
+          </div>
+          {canRegister && (
+            <div className="flex rounded-full bg-neutral-100 p-1 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode("login");
+                  setMsg(null);
+                }}
+                className={`rounded-full px-3 py-1 transition ${
+                  mode === "login"
+                    ? "bg-white text-neutral-900 shadow-sm"
+                    : "text-neutral-500 hover:text-neutral-900"
+                }`}
+              >
+                Sign in
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode("register");
+                  setMsg(null);
+                }}
+                className={`rounded-full px-3 py-1 transition ${
+                  mode === "register"
+                    ? "bg-[#e60000] text-white shadow-sm"
+                    : "text-neutral-500 hover:text-neutral-900"
+                }`}
+              >
+                Register
+              </button>
+            </div>
+          )}
+        </div>
 
         {!statusLoaded && (
           <p className="mt-6 text-center text-sm text-neutral-500">Loading…</p>
