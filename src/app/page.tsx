@@ -137,24 +137,24 @@ export default function PlatformLandingPage() {
 
   const faqs = [
     {
-      q: "Partner banne ke baad mujhe kya-kya milega?",
-      a: "Jaise hi aap register karenge, aapko turant 2 cheezein milengi: (1) Aapka apna branded Customer Storefront URL (/r/[your-slug]) jahan customers direct order kar sakte hain, aur (2) Aapka dedicated Admin Panel (/admin) jahan se aap apna menu, categories, offers, banners aur live kitchen orders manage kar sakte hain.",
+      q: "What do I get once I register as a restaurant partner?",
+      a: "Upon registration, you immediately receive two fully-integrated systems: (1) Your own branded Customer Storefront URL (/r/your-slug) where diners can browse and order directly, and (2) A private, secure Kitchen & Store Admin Panel (/admin) to manage your menu, pricing, categories, marketing banners, and live kitchen orders in real time.",
     },
     {
-      q: "Kya isme koi hidden commission ya platform fee hai?",
-      a: "Bilkul nahi! Swiggy/Zomato jaise aggregators 25-30% commission lete hain, lekin hamare portal par 0% commission hai. 100% kamai seedha aapki hoti hai.",
+      q: "Are there any hidden platform fees or order commissions?",
+      a: "Zero! Unlike third-party delivery apps that take 25% to 32% of your revenue, our platform charges 0% commission. You keep 100% of your earnings and receive direct orders from your customers.",
     },
     {
-      q: "Kya main apne products aur prices khud badal sakta hoon?",
-      a: "Haan! Aapke Admin Dashboard me Products aur Categories ka full access milta hai. Aap jab chahein naya pizza/dish add kar sakte hain, price change kar sakte hain, ya out-of-stock mark kar sakte hain.",
+      q: "Can I update my menu, pricing, and availability anytime?",
+      a: "Yes, completely. From your Admin Dashboard, you have full control to add new pizzas and dishes, adjust prices, introduce discount deals, or toggle items out-of-stock instantly.",
     },
     {
-      q: "Customers mere restaurant par order kaise karenge?",
-      a: "Aapko ek unique link milta hai jaise `/r/pizzahub`. Aap is link ko WhatsApp, Instagram bio, ya QR code sticker bana kar tables par laga sakte hain. Customers bina kisi app download kiye browser me menu dekh kar direct order karenge.",
+      q: "How do customers order from my restaurant?",
+      a: "You get a dedicated direct link (e.g. /r/pizzahub). You can add this URL to your Instagram bio, WhatsApp messages, Google Business profile, or print it as a QR code on tables. Customers simply open the link in any mobile browser and order seamlessly without downloading an app.",
     },
     {
-      q: "Kya ek hi platform par doosre restaurants mera data dekh sakte hain?",
-      a: "Nahi, hamara multi-tenant database har partner ka data 100% isolate rakhta hai. Kisi bhi partner ko doosre partner ke orders, menu ya customer details ka access nahi hota.",
+      q: "Can other restaurants access my customer data or sales figures?",
+      a: "Never. Our multi-tenant architecture ensures complete database-level tenant isolation. Each partner's orders, menu, customer details, and operational data are 100% private and protected.",
     },
   ];
 
@@ -504,11 +504,11 @@ export default function PlatformLandingPage() {
               Partner Superpowers
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-white mt-2">
-              Ek Hi Registration Se Milenge 2 Powerful Portals
+              Two Powerful Portals in One Simple Registration
             </h2>
             <p className="text-sm sm:text-base text-neutral-400 mt-3 leading-relaxed">
-              Jab aap partner bante hain, toh hamara platform aapke restaurant ke liye turant
-              ek <strong>Customer Storefront</strong> aur ek <strong>Kitchen Admin Panel</strong> generate kar deta hai.
+              When you become a partner, our platform automatically provisions a high-converting
+              <strong> Customer Storefront</strong> and a dedicated <strong>Operations & Kitchen Admin Dashboard</strong>.
             </p>
           </div>
 
@@ -521,20 +521,20 @@ export default function PlatformLandingPage() {
                     <Smartphone className="h-6 w-6" />
                   </div>
                   <span className="rounded-full bg-red-950 border border-red-800 px-3 py-1 text-xs font-bold text-red-300">
-                    Portal 1: Customer Store
+                    Portal 1: Customer Storefront
                   </span>
                 </div>
 
                 <h3 className="text-2xl font-extrabold text-white">
-                  Aapka Branded Online Storefront
+                  Your Branded Online Storefront
                 </h3>
                 <p className="text-xs font-mono text-orange-400 mt-1">
-                  URL: http://your-domain/r/[your-slug]
+                  URL: https://your-domain/r/[your-slug]
                 </p>
 
                 <p className="text-sm text-neutral-400 mt-4 leading-relaxed">
-                  Har partner ko unke restaurant ka custom URL milta hai. Customer is link par
-                  jaakar direct live menu dekh sakte hain, pizza customise kar sakte hain, cart me add karke checkout kar sakte hain.
+                  Every restaurant partner gets their own dedicated custom URL. Customers browse
+                  your live interactive menu, customize toppings and crusts, and check out with zero friction.
                 </p>
 
                 <ul className="mt-6 space-y-2.5 text-xs text-neutral-300">
@@ -544,15 +544,15 @@ export default function PlatformLandingPage() {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                    <span>Rich product images, veg/non-veg badges, crust & size options</span>
+                    <span>Rich product images, dietary badges (Veg/Non-Veg), and crust/size options</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                    <span>Integrated live Cart & instant Order Checkout</span>
+                    <span>Integrated live Cart with fast mobile-optimized checkout</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                    <span>Live Order Tracking Page (/r/[slug]/order/[id])</span>
+                    <span>Live Order Tracking page (/r/[slug]/order/[id])</span>
                   </li>
                 </ul>
               </div>
@@ -577,38 +577,38 @@ export default function PlatformLandingPage() {
                     <Laptop className="h-6 w-6" />
                   </div>
                   <span className="rounded-full bg-orange-950 border border-orange-800 px-3 py-1 text-xs font-bold text-orange-300">
-                    Portal 2: Kitchen & Store Admin
+                    Portal 2: Kitchen & Operations Admin
                   </span>
                 </div>
 
                 <h3 className="text-2xl font-extrabold text-white">
-                  Aapka Dedicated Admin Dashboard
+                  Your Dedicated Admin Dashboard
                 </h3>
                 <p className="text-xs font-mono text-orange-400 mt-1">
-                  URL: http://your-domain/admin
+                  URL: https://your-domain/admin
                 </p>
 
                 <p className="text-sm text-neutral-400 mt-4 leading-relaxed">
-                  Aapka secured back-office jahan se aap apne restaurant ka pura operation control karte hain.
-                  Dusre restaurants ka data bilkul isolated rehta hai.
+                  Your private, secure back-office command center. Manage your live kitchen orders,
+                  dish catalog, marketing banners, and site branding with complete data isolation.
                 </p>
 
                 <ul className="mt-6 space-y-2.5 text-xs text-neutral-300">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                    <span>Real-time Live Orders Dashboard with sound & status tracking</span>
+                    <span>Real-time Live Orders Dashboard with sound alerts and status workflow</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                    <span>Add, edit, delete menu dishes, pricing & categories</span>
+                    <span>Add, edit, or remove menu items, pricing, and category tags</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                    <span>Upload custom promotional banners & announcement marquis</span>
+                    <span>Upload custom promotional banners & announcement marquees</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                    <span>Navbar settings, store logo & business contact customization</span>
+                    <span>Navbar settings, store logo, and business contact customization</span>
                   </li>
                 </ul>
               </div>
@@ -633,13 +633,13 @@ export default function PlatformLandingPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-[#e60000]">
-              Simple 3 Steps
+              Simple 3-Step Process
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-white mt-2">
-              Kaise Kaam Karta Hai Yeh System?
+              How It Works
             </h2>
             <p className="text-sm text-neutral-400 mt-2">
-              Zero technical skills required. Aapka restaurant turant live hota hai.
+              Zero technical skills required. Your digital restaurant goes live in minutes.
             </p>
           </div>
 
@@ -653,7 +653,7 @@ export default function PlatformLandingPage() {
               </div>
               <h3 className="font-bold text-lg text-white">1. Launch Store Form</h3>
               <p className="text-xs text-neutral-400 mt-2 leading-relaxed">
-                Launch Store button click karke Restaurant Name, Store Slug, aur Admin Username/Password dalein. 1 click me store create ho jata hai.
+                Click 'Launch Store' to enter your Restaurant Name, custom URL slug, and Admin login credentials. Your isolated store is ready in one click.
               </p>
             </div>
 
@@ -666,7 +666,7 @@ export default function PlatformLandingPage() {
               </div>
               <h3 className="font-bold text-lg text-white">2. Add Dishes & Pricing</h3>
               <p className="text-xs text-neutral-400 mt-2 leading-relaxed">
-                Apne Admin Panel me login karein. Categories (Pizzas, Drinks, Combos) banayein aur dishes add karein photo aur prices ke saath.
+                Log in to your private Admin Panel. Create categories (Pizzas, Beverages, Combos) and publish dishes with photos, crusts, and prices.
               </p>
             </div>
 
@@ -679,7 +679,7 @@ export default function PlatformLandingPage() {
               </div>
               <h3 className="font-bold text-lg text-white">3. Share URL & Start Orders</h3>
               <p className="text-xs text-neutral-400 mt-2 leading-relaxed">
-                Apna link (/r/[your-slug]) WhatsApp aur Instagram par share karein ya table QR code banayein. Direct 0% commission orders receive karein!
+                Share your direct ordering link (/r/[your-slug]) on WhatsApp, Instagram bio, or print QR codes for tables. Receive direct orders with 0% commission!
               </p>
             </div>
           </div>
@@ -698,7 +698,7 @@ export default function PlatformLandingPage() {
                 Live Partner Restaurants
               </h2>
               <p className="text-sm text-neutral-400 mt-1">
-                Platform par registered restaurants ka live storefront dekhein.
+                Explore real restaurant storefronts running live on our platform.
               </p>
             </div>
 
@@ -715,7 +715,7 @@ export default function PlatformLandingPage() {
             </div>
           ) : restaurants.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-neutral-800 p-12 text-center text-neutral-500">
-              Koi restaurant registered nahi hai. Launch Store button se pehla restaurant register karein!
+              No restaurants registered yet. Click 'Launch Store' above to be the first!
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -821,7 +821,7 @@ export default function PlatformLandingPage() {
             Ready to Take Your Restaurant Online?
           </h2>
           <p className="text-neutral-300 text-sm sm:text-base mt-4 max-w-xl mx-auto">
-            Abhi register karein aur 2 minute me apna branded food ordering website aur kitchen admin dashboard shuru karein!
+            Register today and launch your branded food ordering website and kitchen admin dashboard in just 2 minutes!
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
