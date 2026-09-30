@@ -224,37 +224,29 @@ export default function PlatformLandingPage() {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
           {/* Centered Hero Header */}
-          <div className="mx-auto max-w-3xl text-center space-y-6">
+          <div className="mx-auto max-w-3xl text-center space-y-5">
             <div className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-950/60 px-4 py-1.5 text-xs font-bold text-red-400 backdrop-blur-xs">
               <Sparkles className="h-3.5 w-3.5 text-orange-400 animate-pulse" />
-              <span>Restaurant Partner Ecosystem • 0% Commission</span>
+              <span>Zero Commission • Complete Restaurant Operating System</span>
             </div>
 
-            <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl leading-[1.06]">
-              Start Your Online Restaurant Store in{" "}
+            <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl md:text-6xl leading-[1.1]">
+              Launch Your Branded Restaurant Store in{" "}
               <span className="bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">
-                2 Minutes.
+                2 Minutes
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-neutral-300 max-w-2xl mx-auto leading-relaxed">
-              Hamare portal par apna restaurant add karein aur paayein apna khud ka{" "}
-              <span className="text-white font-bold underline decoration-red-500 decoration-2 underline-offset-4">
-                Branded Customer Storefront (/r/your-slug)
-              </span>{" "}
-              aur ek powerful{" "}
-              <span className="text-white font-bold underline decoration-orange-500 decoration-2 underline-offset-4">
-                Dedicated Admin Dashboard
-              </span>
-              . Direct orders, full menu control, aur instant payouts!
+            <p className="text-sm sm:text-base text-neutral-300 max-w-xl mx-auto leading-relaxed">
+              Get your custom ordering link (<span className="text-orange-400 font-mono font-bold">/r/your-slug</span>) and a dedicated live kitchen admin dashboard. Direct orders with 100% profit.
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-3.5 pt-1">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] transition cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-7 py-3.5 text-sm font-bold text-white shadow-xl shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] transition cursor-pointer"
               >
                 <Store className="h-4 w-4" />
                 <span>Launch Your Store (Free)</span>
@@ -263,23 +255,23 @@ export default function PlatformLandingPage() {
 
               <Link
                 href="/r/pizzahub"
-                className="inline-flex items-center gap-2 rounded-full border border-neutral-700 bg-neutral-900/80 px-6 py-4 text-sm font-bold text-neutral-200 shadow-sm hover:bg-neutral-800 hover:border-neutral-600 transition"
+                className="inline-flex items-center gap-2 rounded-full border border-neutral-700 bg-neutral-900/80 px-6 py-3.5 text-sm font-bold text-neutral-200 shadow-sm hover:bg-neutral-800 hover:border-neutral-600 transition"
               >
                 <UtensilsCrossed className="h-4 w-4 text-[#e60000]" />
                 <span>Preview Demo Store</span>
               </Link>
             </div>
 
-            {/* Stat Pill Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-2.5 pt-4 text-xs font-semibold">
-              <span className="rounded-full bg-neutral-900/90 border border-neutral-800 px-3.5 py-1 text-neutral-300">
-                🚀 Store URL: <span className="text-white font-mono font-bold">/r/[your-slug]</span>
+            {/* Clean Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs font-semibold">
+              <span className="rounded-full bg-neutral-900/90 border border-neutral-800 px-3 py-1 text-neutral-300">
+                🚀 <span className="font-mono text-white">/r/[your-slug]</span>
               </span>
-              <span className="rounded-full bg-emerald-950/70 border border-emerald-800/80 px-3.5 py-1 text-emerald-400">
-                💰 0% Commission Forever
+              <span className="rounded-full bg-emerald-950/70 border border-emerald-800/80 px-3 py-1 text-emerald-400">
+                💰 0% Commission
               </span>
-              <span className="rounded-full bg-orange-950/70 border border-orange-800/80 px-3.5 py-1 text-orange-400">
-                🔒 100% Isolated Admin Panel
+              <span className="rounded-full bg-orange-950/70 border border-orange-800/80 px-3 py-1 text-orange-400">
+                🔒 Isolated Admin
               </span>
             </div>
           </div>
