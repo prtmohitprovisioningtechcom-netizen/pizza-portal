@@ -770,59 +770,6 @@ export default function PlatformLandingPage() {
         </div>
       </section>
 
-      {/* Comparison: Why This Over Swiggy/Zomato */}
-      <section className="py-20 border-t border-neutral-800">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#e60000]">
-              The Big Advantage
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-white mt-2">
-              Why Restaurant Owners Love Our Portal
-            </h2>
-          </div>
-
-          <div className="overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900/60 shadow-xl">
-            <div className="grid grid-cols-3 bg-neutral-950 p-4 border-b border-neutral-800 text-xs font-bold uppercase tracking-wider text-neutral-400">
-              <div>Feature</div>
-              <div className="text-red-400 text-center font-extrabold">Our Partner Portal</div>
-              <div className="text-neutral-500 text-center">Third-Party Aggregators</div>
-            </div>
-
-            <div className="divide-y divide-neutral-800 text-xs sm:text-sm">
-              <div className="grid grid-cols-3 p-4 items-center">
-                <div className="font-semibold text-white">Commission Per Order</div>
-                <div className="text-center font-extrabold text-emerald-400">0% (Zero)</div>
-                <div className="text-center text-red-400">25% - 32% Cut</div>
-              </div>
-
-              <div className="grid grid-cols-3 p-4 items-center">
-                <div className="font-semibold text-white">Your Brand Identity</div>
-                <div className="text-center font-extrabold text-white">Your own custom /r/[slug] URL</div>
-                <div className="text-center text-neutral-400">Listed among competitors</div>
-              </div>
-
-              <div className="grid grid-cols-3 p-4 items-center">
-                <div className="font-semibold text-white">Customer Data Ownership</div>
-                <div className="text-center font-extrabold text-emerald-400">100% Direct Customer Access</div>
-                <div className="text-center text-neutral-400">Hidden / Masked Numbers</div>
-              </div>
-
-              <div className="grid grid-cols-3 p-4 items-center">
-                <div className="font-semibold text-white">Store Setup Speed</div>
-                <div className="text-center font-extrabold text-orange-400">Instant (2 Minutes)</div>
-                <div className="text-center text-neutral-400">Takes 7-15 Days verification</div>
-              </div>
-
-              <div className="grid grid-cols-3 p-4 items-center">
-                <div className="font-semibold text-white">Menu & Offers Control</div>
-                <div className="text-center font-extrabold text-white">Instant live updates via Admin</div>
-                <div className="text-center text-neutral-400">Approval queue required</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* FAQs */}
       <section id="faq" className="py-20 bg-neutral-950 border-t border-neutral-800">
