@@ -108,8 +108,8 @@ export function MenuView() {
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
-  const load = useCallback(async () => {
-    setLoading(true);
+  const load = useCallback(async (isInitial = false) => {
+    if (isInitial) setLoading(true);
     setError(null);
     try {
       const [menu, s] = await Promise.all([fetchMenu(), fetchSettings()]);
@@ -117,29 +117,14 @@ export function MenuView() {
       setCategories(menu.categories);
       setHeroImages(s.heroImages);
     } catch {
-      setError("Could not load menu. Check MongoDB connection.");
+      setError("Could not load menu. Check MySQL connection.");
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    load();
-  }, [load]);
-
-  /** Refetch when user comes back from another tab (e.g. admin) so names always match DB */
-  useEffect(() => {
-    let wasHidden = false;
-    const onVis = () => {
-      if (document.visibilityState === "hidden") {
-        wasHidden = true;
-      } else if (document.visibilityState === "visible" && wasHidden) {
-        wasHidden = false;
-        void load();
-      }
-    };
-    document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
+    load(true);
   }, [load]);
 
   const filteredProducts = useMemo(() => {
@@ -356,22 +341,7 @@ export function MenuView() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="relative flex min-h-dvh flex-col overflow-x-hidden bg-[#faf8f5]">
-        <Navbar onCartClick={() => setCartOpen(true)} />
-        <main className="mx-auto w-full max-w-6xl flex-1 px-2.5 py-2 sm:px-3 sm:py-3 md:px-6 md:py-4 flex flex-col items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative h-12 w-12">
-              <div className="absolute inset-0 rounded-full border-4 border-[#e60000]/20 border-t-[#e60000] animate-spin"></div>
-            </div>
-            <p className="text-sm text-neutral-600">Loading menu…</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-x-hidden bg-[#faf8f5]">

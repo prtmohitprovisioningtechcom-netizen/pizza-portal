@@ -17,8 +17,7 @@ function errMsg(e: unknown, fallback: string) {
 
 export default function AdminLoginPage() {
   const [mode, setMode] = useState<Mode>("login");
-  const [canRegister, setCanRegister] = useState(false);
-  const [statusLoaded, setStatusLoaded] = useState(false);
+  const [canRegister, setCanRegister] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -33,11 +32,13 @@ export default function AdminLoginPage() {
           "/api/admin/register-status"
         );
         setCanRegister(data.canRegister);
-        if (data.canRegister) setMode("register");
+        if (data.canRegister) {
+          setMode("register");
+        } else {
+          setMode("login");
+        }
       } catch {
-        setCanRegister(false);
-      } finally {
-        setStatusLoaded(true);
+        // keep current mode
       }
     })();
   }, []);
@@ -88,11 +89,7 @@ export default function AdminLoginPage() {
           )}
         </div>
 
-        {!statusLoaded && (
-          <p className="mt-6 text-center text-sm text-neutral-500">Loading…</p>
-        )}
-
-        {statusLoaded && mode === "login" ? (
+        {mode === "login" ? (
           <form
             className="mt-6 space-y-4"
             onSubmit={async (e) => {
@@ -144,7 +141,7 @@ export default function AdminLoginPage() {
               {loading ? "Signing in…" : "Sign in"}
             </button>
           </form>
-        ) : statusLoaded ? (
+        ) : (
           <form
             className="mt-6 space-y-4"
             onSubmit={async (e) => {
@@ -216,7 +213,7 @@ export default function AdminLoginPage() {
               {loading ? "Creating…" : "Create account"}
             </button>
           </form>
-        ) : null}
+        )}
 
         {msg && <p className="mt-4 text-sm text-red-600">{msg}</p>}
       </div>
