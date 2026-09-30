@@ -216,15 +216,63 @@ export default function PlatformLandingPage() {
         </div>
       </header>
 
-      {/* Hero Section: Cinematic Full-Width Showcase Banner */}
-      <section className="relative overflow-hidden pt-12 pb-20 md:pt-16 md:pb-28">
+      {/* Hero Section: Image on top, Headline & Actions below */}
+      <section className="relative overflow-hidden pt-6 pb-20 md:pt-10 md:pb-24">
         {/* Ambient background glow effects */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-red-600/15 blur-[140px] pointer-events-none rounded-full" />
         <div className="absolute top-1/3 right-1/4 w-[400px] h-[250px] bg-orange-600/10 blur-[120px] pointer-events-none rounded-full" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-          {/* Centered Hero Header */}
-          <div className="mx-auto max-w-3xl text-center space-y-5">
+          {/* 1. Full-Width Visual Showcase Banner Image ON TOP */}
+          <div className="mx-auto max-w-5xl relative">
+            <div className="relative group rounded-3xl border border-neutral-800/80 bg-neutral-900/70 p-2 sm:p-3 shadow-2xl shadow-black/90 backdrop-blur-md overflow-hidden">
+              {/* Top gradient highlight bar */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-red-600 via-orange-500 to-amber-400 rounded-t-3xl" />
+
+              {/* Floating Top Badge */}
+              <div className="absolute top-5 left-5 z-20 hidden sm:flex items-center gap-2 rounded-full border border-neutral-700/80 bg-neutral-950/90 px-4 py-1.5 text-xs font-bold text-white shadow-xl backdrop-blur-md">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Live Customer Storefront + Dedicated Kitchen Admin Included</span>
+              </div>
+
+              {/* The Cinematic High-Tech Visual Banner */}
+              <div className="relative aspect-16/9 sm:aspect-21/9 w-full overflow-hidden rounded-2xl border border-neutral-800/90 bg-neutral-950">
+                <img
+                  src="/partner-platform-hero.jpg"
+                  alt="Restaurant Partner Platform - Admin Dashboard & Customer Storefront"
+                  className="h-full w-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-700"
+                />
+                {/* Subtle dark gradient overlay */}
+                <div className="absolute inset-0 bg-linear-to-t from-neutral-950/80 via-transparent to-neutral-950/20" />
+              </div>
+
+              {/* Floating Bottom Action Bar */}
+              <div className="absolute bottom-4 left-4 right-4 z-20 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-neutral-800/90 bg-neutral-950/95 p-3 sm:px-5 sm:py-3 shadow-2xl backdrop-blur-md">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-600/20 text-[#e60000] border border-red-500/30">
+                    <ChefHat className="h-4 w-4" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-xs font-bold text-white leading-tight">Ready to get your restaurant online?</p>
+                    <p className="text-[11px] text-neutral-400">Setup takes only 2 minutes • 0% commission</p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#e60000] to-orange-600 px-4 py-2 text-xs font-bold text-white shadow-lg hover:opacity-90 transition cursor-pointer"
+                >
+                  <Store className="h-3.5 w-3.5" />
+                  <span>Launch My Restaurant Store</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Headline & Action Buttons BELOW the Image */}
+          <div className="mt-12 sm:mt-16 mx-auto max-w-3xl text-center space-y-5">
             <div className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-950/60 px-4 py-1.5 text-xs font-bold text-red-400 backdrop-blur-xs">
               <Sparkles className="h-3.5 w-3.5 text-orange-400 animate-pulse" />
               <span>Zero Commission • Complete Restaurant Operating System</span>
@@ -273,54 +321,6 @@ export default function PlatformLandingPage() {
               <span className="rounded-full bg-orange-950/70 border border-orange-800/80 px-3 py-1 text-orange-400">
                 🔒 Isolated Admin
               </span>
-            </div>
-          </div>
-
-          {/* Full-Width Visual Showcase Banner Image */}
-          <div className="mt-12 sm:mt-16 mx-auto max-w-5xl relative">
-            <div className="relative group rounded-3xl border border-neutral-800/80 bg-neutral-900/70 p-2 sm:p-3 shadow-2xl shadow-black/90 backdrop-blur-md overflow-hidden">
-              {/* Top gradient highlight bar */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-red-600 via-orange-500 to-amber-400 rounded-t-3xl" />
-
-              {/* Floating Top Badge */}
-              <div className="absolute top-6 left-6 z-20 hidden sm:flex items-center gap-2 rounded-full border border-neutral-700/80 bg-neutral-950/90 px-4 py-2 text-xs font-bold text-white shadow-xl backdrop-blur-md">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Live Customer Storefront + Dedicated Kitchen Admin Included</span>
-              </div>
-
-              {/* The Cinematic High-Tech Visual Banner */}
-              <div className="relative aspect-16/9 sm:aspect-21/9 w-full overflow-hidden rounded-2xl border border-neutral-800/90 bg-neutral-950">
-                <img
-                  src="/partner-platform-hero.jpg"
-                  alt="Restaurant Partner Platform - Admin Dashboard & Customer Storefront"
-                  className="h-full w-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-700"
-                />
-                {/* Subtle dark gradient overlay */}
-                <div className="absolute inset-0 bg-linear-to-t from-neutral-950/80 via-transparent to-neutral-950/20" />
-              </div>
-
-              {/* Floating Bottom Action Bar */}
-              <div className="absolute bottom-5 left-5 right-5 z-20 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-neutral-800/90 bg-neutral-950/95 p-3.5 sm:px-6 sm:py-3.5 shadow-2xl backdrop-blur-md">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-600/20 text-[#e60000] border border-red-500/30">
-                    <ChefHat className="h-5 w-5" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs font-bold text-white leading-tight">Ready to get your restaurant online?</p>
-                    <p className="text-[11px] text-neutral-400">Setup takes only 2 minutes • 0% commission</p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(true)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#e60000] to-orange-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg hover:opacity-90 transition cursor-pointer"
-                >
-                  <Store className="h-3.5 w-3.5" />
-                  <span>Launch My Restaurant Store</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </button>
-              </div>
             </div>
           </div>
         </div>
