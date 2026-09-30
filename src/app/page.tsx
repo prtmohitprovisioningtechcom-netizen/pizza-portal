@@ -216,122 +216,118 @@ export default function PlatformLandingPage() {
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section: Cinematic Full-Width Showcase Banner */}
       <section className="relative overflow-hidden pt-12 pb-20 md:pt-16 md:pb-28">
-        {/* Background glow effects */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[350px] bg-red-600/15 blur-[130px] pointer-events-none rounded-full" />
-        <div className="absolute top-1/3 right-10 w-[350px] h-[250px] bg-orange-600/10 blur-[100px] pointer-events-none rounded-full" />
+        {/* Ambient background glow effects */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-red-600/15 blur-[140px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/3 right-1/4 w-[400px] h-[250px] bg-orange-600/10 blur-[120px] pointer-events-none rounded-full" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
-            {/* Left Column: Hero Content */}
-            <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-950/60 px-4 py-1.5 text-xs font-bold text-red-400 backdrop-blur-xs">
-                <Sparkles className="h-3.5 w-3.5 text-orange-400 animate-pulse" />
-                <span>Restaurant Partner Ecosystem • 0% Commission</span>
+          {/* Centered Hero Header */}
+          <div className="mx-auto max-w-3xl text-center space-y-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-950/60 px-4 py-1.5 text-xs font-bold text-red-400 backdrop-blur-xs">
+              <Sparkles className="h-3.5 w-3.5 text-orange-400 animate-pulse" />
+              <span>Restaurant Partner Ecosystem • 0% Commission</span>
+            </div>
+
+            <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl leading-[1.06]">
+              Start Your Online Restaurant Store in{" "}
+              <span className="bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">
+                2 Minutes.
+              </span>
+            </h1>
+
+            <p className="text-base sm:text-lg text-neutral-300 max-w-2xl mx-auto leading-relaxed">
+              Hamare portal par apna restaurant add karein aur paayein apna khud ka{" "}
+              <span className="text-white font-bold underline decoration-red-500 decoration-2 underline-offset-4">
+                Branded Customer Storefront (/r/your-slug)
+              </span>{" "}
+              aur ek powerful{" "}
+              <span className="text-white font-bold underline decoration-orange-500 decoration-2 underline-offset-4">
+                Dedicated Admin Dashboard
+              </span>
+              . Direct orders, full menu control, aur instant payouts!
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(true)}
+                className="inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] transition cursor-pointer"
+              >
+                <Store className="h-4 w-4" />
+                <span>Launch Your Store (Free)</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              <Link
+                href="/r/pizzahub"
+                className="inline-flex items-center gap-2 rounded-full border border-neutral-700 bg-neutral-900/80 px-6 py-4 text-sm font-bold text-neutral-200 shadow-sm hover:bg-neutral-800 hover:border-neutral-600 transition"
+              >
+                <UtensilsCrossed className="h-4 w-4 text-[#e60000]" />
+                <span>Preview Demo Store</span>
+              </Link>
+            </div>
+
+            {/* Stat Pill Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-2.5 pt-4 text-xs font-semibold">
+              <span className="rounded-full bg-neutral-900/90 border border-neutral-800 px-3.5 py-1 text-neutral-300">
+                🚀 Store URL: <span className="text-white font-mono font-bold">/r/[your-slug]</span>
+              </span>
+              <span className="rounded-full bg-emerald-950/70 border border-emerald-800/80 px-3.5 py-1 text-emerald-400">
+                💰 0% Commission Forever
+              </span>
+              <span className="rounded-full bg-orange-950/70 border border-orange-800/80 px-3.5 py-1 text-orange-400">
+                🔒 100% Isolated Admin Panel
+              </span>
+            </div>
+          </div>
+
+          {/* Full-Width Visual Showcase Banner Image */}
+          <div className="mt-12 sm:mt-16 mx-auto max-w-5xl relative">
+            <div className="relative group rounded-3xl border border-neutral-800/80 bg-neutral-900/70 p-2 sm:p-3 shadow-2xl shadow-black/90 backdrop-blur-md overflow-hidden">
+              {/* Top gradient highlight bar */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-red-600 via-orange-500 to-amber-400 rounded-t-3xl" />
+
+              {/* Floating Top Badge */}
+              <div className="absolute top-6 left-6 z-20 hidden sm:flex items-center gap-2 rounded-full border border-neutral-700/80 bg-neutral-950/90 px-4 py-2 text-xs font-bold text-white shadow-xl backdrop-blur-md">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Live Customer Storefront + Dedicated Kitchen Admin Included</span>
               </div>
 
-              <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl md:text-6xl leading-[1.08]">
-                Start Your Online Restaurant Store in{" "}
-                <span className="bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">
-                  2 Minutes.
-                </span>
-              </h1>
+              {/* The Cinematic High-Tech Visual Banner */}
+              <div className="relative aspect-16/9 sm:aspect-21/9 w-full overflow-hidden rounded-2xl border border-neutral-800/90 bg-neutral-950">
+                <img
+                  src="/partner-platform-hero.jpg"
+                  alt="Restaurant Partner Platform - Admin Dashboard & Customer Storefront"
+                  className="h-full w-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-700"
+                />
+                {/* Subtle dark gradient overlay */}
+                <div className="absolute inset-0 bg-linear-to-t from-neutral-950/80 via-transparent to-neutral-950/20" />
+              </div>
 
-              <p className="text-base sm:text-lg text-neutral-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Hamare portal par apna restaurant add karein aur paayein apna khud ka{" "}
-                <span className="text-white font-bold underline decoration-red-500 decoration-2 underline-offset-4">
-                  Branded Customer Storefront (/r/your-slug)
-                </span>{" "}
-                aur ek powerful{" "}
-                <span className="text-white font-bold underline decoration-orange-500 decoration-2 underline-offset-4">
-                  Dedicated Admin Dashboard
-                </span>
-                . Direct orders, full menu control, aur instant payouts!
-              </p>
+              {/* Floating Bottom Action Bar */}
+              <div className="absolute bottom-5 left-5 right-5 z-20 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-neutral-800/90 bg-neutral-950/95 p-3.5 sm:px-6 sm:py-3.5 shadow-2xl backdrop-blur-md">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-600/20 text-[#e60000] border border-red-500/30">
+                    <ChefHat className="h-5 w-5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-xs font-bold text-white leading-tight">Ready to get your restaurant online?</p>
+                    <p className="text-[11px] text-neutral-400">Setup takes only 2 minutes • 0% commission</p>
+                  </div>
+                </div>
 
-              {/* Action buttons */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(true)}
-                  className="inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] transition cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#e60000] to-orange-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg hover:opacity-90 transition cursor-pointer"
                 >
-                  <Store className="h-4 w-4" />
-                  <span>Register Your Restaurant Now</span>
-                  <ArrowRight className="h-4 w-4" />
+                  <Store className="h-3.5 w-3.5" />
+                  <span>Launch My Restaurant Store</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </button>
-
-                <Link
-                  href="/r/pizzahub"
-                  className="inline-flex items-center gap-2 rounded-full border border-neutral-700 bg-neutral-900/80 px-6 py-4 text-sm font-bold text-neutral-200 shadow-sm hover:bg-neutral-800 hover:border-neutral-600 transition"
-                >
-                  <UtensilsCrossed className="h-4 w-4 text-[#e60000]" />
-                  <span>Preview Demo Store</span>
-                </Link>
-              </div>
-
-              {/* Value highlights */}
-              <div className="grid grid-cols-3 gap-3 pt-6 border-t border-neutral-800 text-left">
-                <div className="bg-neutral-900/60 border border-neutral-800/80 rounded-2xl p-3.5">
-                  <p className="text-[11px] text-neutral-400 font-semibold uppercase">Your Store URL</p>
-                  <p className="text-sm font-extrabold text-white mt-1 font-mono">/r/[your-slug]</p>
-                </div>
-                <div className="bg-neutral-900/60 border border-neutral-800/80 rounded-2xl p-3.5">
-                  <p className="text-[11px] text-neutral-400 font-semibold uppercase">Commission</p>
-                  <p className="text-sm font-extrabold text-emerald-400 mt-1">0% Forever</p>
-                </div>
-                <div className="bg-neutral-900/60 border border-neutral-800/80 rounded-2xl p-3.5">
-                  <p className="text-[11px] text-neutral-400 font-semibold uppercase">Admin Panel</p>
-                  <p className="text-sm font-extrabold text-orange-400 mt-1">100% Isolated</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Hero Visual Graphic / Image replacing the inline form */}
-            <div className="lg:col-span-6 relative">
-              <div className="relative group rounded-3xl border border-neutral-800/80 bg-neutral-900/60 p-2.5 sm:p-3 shadow-2xl backdrop-blur-md overflow-hidden">
-                {/* Visual Glow behind image */}
-                <div className="absolute inset-0 bg-linear-to-tr from-red-600/10 via-transparent to-orange-500/15 pointer-events-none rounded-3xl" />
-
-                {/* Floating Top Badge */}
-                <div className="absolute top-6 left-6 z-20 hidden sm:flex items-center gap-2 rounded-full border border-neutral-700/80 bg-neutral-950/90 px-3.5 py-1.5 text-xs font-bold text-white shadow-xl backdrop-blur-md">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Customer Store + Kitchen Admin Included</span>
-                </div>
-
-                {/* The Generated High-Tech Visual Image */}
-                <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-neutral-800">
-                  <img
-                    src="/partner-platform-hero.jpg"
-                    alt="Restaurant Partner Platform - Admin Dashboard & Customer Storefront"
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  {/* Subtle inner dark gradient overlay */}
-                  <div className="absolute inset-0 bg-linear-to-t from-neutral-950/80 via-transparent to-neutral-950/20" />
-                </div>
-
-                {/* Floating Bottom Card Banner */}
-                <div className="absolute bottom-6 left-6 right-6 z-20 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-neutral-800/90 bg-neutral-950/90 p-3.5 sm:px-4 sm:py-3 shadow-2xl backdrop-blur-md">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-600/20 text-[#e60000] border border-red-500/30">
-                      <ChefHat className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-white leading-tight">Ready to get your store?</p>
-                      <p className="text-[11px] text-neutral-400">Setup takes only 2 minutes</p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(true)}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-linear-to-r from-[#e60000] to-orange-600 px-4 py-2 text-xs font-bold text-white shadow-md hover:opacity-90 transition cursor-pointer"
-                  >
-                    <span>Launch Store</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </button>
-                </div>
               </div>
             </div>
           </div>
