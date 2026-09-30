@@ -272,16 +272,13 @@ export default function PlatformLandingPage() {
           </div>
 
           {/* 2. Headline & Action Buttons BELOW the Image */}
-          <div className="mt-12 sm:mt-16 mx-auto max-w-3xl text-center space-y-5">
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-950/60 px-4 py-1.5 text-xs font-bold text-red-400 backdrop-blur-xs">
-              <Sparkles className="h-3.5 w-3.5 text-orange-400 animate-pulse" />
-              <span>Zero Commission • Complete Restaurant Operating System</span>
-            </div>
-
-            <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl md:text-6xl leading-[1.1]">
-              Launch Your Branded Restaurant Store in{" "}
-              <span className="bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">
-                2 Minutes
+          <div className="mt-12 sm:mt-16 mx-auto max-w-4xl text-center space-y-5">
+            <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl leading-[1.12]">
+              <span className="block text-white drop-shadow-sm">
+                Launch Your Branded Restaurant Store
+              </span>
+              <span className="block mt-1 sm:mt-2 bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent font-black tracking-tight drop-shadow-md">
+                in 2 Minutes.
               </span>
             </h1>
 
