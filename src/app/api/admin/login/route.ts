@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     let restaurantId: number | undefined;
     if (restaurantSlug) {
-      const rest = await Restaurant.findBySlug(restaurantSlug);
+      const rest = await Restaurant.findBySlugAny(restaurantSlug);
       if (rest) restaurantId = rest.id;
     }
 
@@ -45,8 +45,32 @@ export async function POST(request: Request) {
     }
 
     const r = await Restaurant.findById(admin.restaurantId);
-    const slug = r?.slug ?? "pizzahub";
+    if (!r) {
+      return NextResponse.json({ error: "Restaurant profile not found" }, { status: 404 });
+    }
 
+    // Gate: Check verification status
+    if (r.status === "pending") {
+      return NextResponse.json(
+        {
+          error:
+            "Your restaurant account is pending Super Admin verification & payment confirmation. Please contact the platform administration to activate.",
+        },
+        { status: 403 }
+      );
+    }
+
+    if (r.status !== "active") {
+      return NextResponse.json(
+        {
+          error:
+            "Your restaurant account is currently suspended or inactive. Please contact Super Admin.",
+        },
+        { status: 403 }
+      );
+    }
+
+    const slug = r.slug ?? "pizzahub";
     return jsonWithAdminSession(String(admin._id), admin.username, admin.restaurantId, slug);
   } catch (e) {
     console.error(e);

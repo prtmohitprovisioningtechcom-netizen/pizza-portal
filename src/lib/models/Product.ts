@@ -9,7 +9,7 @@ export interface ProductDoc {
   name: string;
   description: string;
   price: number;
-  categoryId?: number | string | { _id: string; name: string } | null;
+  categoryId?: string | number | { _id: string; name: string } | null;
   category: string;
   image: string;
   isVeg: boolean;
@@ -20,7 +20,7 @@ export interface ProductDoc {
 
 function parseVariants(raw: unknown): ProductVariantItem[] {
   if (!raw) return [];
-  if (Array.isArray(raw)) return raw;
+  if (Array.isArray(raw)) return raw as ProductVariantItem[];
   if (typeof raw === "string") {
     try {
       const parsed = JSON.parse(raw);

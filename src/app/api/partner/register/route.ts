@@ -5,7 +5,6 @@ import { Admin } from "@/lib/models/Admin";
 import { NavbarSettings } from "@/lib/models/NavbarSettings";
 import { SiteSettings } from "@/lib/models/SiteSettings";
 import { Category } from "@/lib/models/Category";
-import { jsonWithAdminSession } from "@/lib/admin-session";
 
 export async function POST(request: Request) {
   try {
@@ -39,7 +38,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const reserved = ["admin", "api", "order", "login", "register", "partner", "r"];
+    const reserved = ["admin", "api", "order", "login", "register", "partner", "r", "super-admin", "superadmin"];
     if (reserved.includes(slug)) {
       return NextResponse.json(
         { error: `The URL '${slug}' is reserved. Please pick another one.` },
@@ -68,18 +67,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Create Restaurant
+    // 1. Create Restaurant with status 'pending' and paymentStatus 'pending'
     const restaurant = await Restaurant.create({
       name,
       slug,
       ownerName,
       phone,
       email,
+      status: "pending",
+      paymentStatus: "pending",
+      paymentAmount: 0,
     });
 
     // 2. Create Admin user
     const passwordHash = await bcrypt.hash(password, 12);
-    const admin = await Admin.create({
+    await Admin.create({
       username,
       passwordHash,
       restaurantId: restaurant.id,
@@ -126,15 +128,14 @@ export async function POST(request: Request) {
       restaurantId: restaurant.id,
     });
 
-    // 6. Return response with session cookie and restaurant info
-    const res = await jsonWithAdminSession(
-      String(admin._id),
-      admin.username,
-      restaurant.id,
-      restaurant.slug
-    );
-
-    return res;
+    // Return response informing the partner that their store is registered and pending Super Admin verification
+    return NextResponse.json({
+      ok: true,
+      pending: true,
+      restaurantId: restaurant.id,
+      restaurantSlug: restaurant.slug,
+      message: `Registration received for '${name}'! Your store is pending Super Admin verification & payment confirmation. Once activated, your storefront and admin login will be live.`,
+    });
   } catch (e) {
     console.error("Partner register error:", e);
     return NextResponse.json(

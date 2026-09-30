@@ -1,23 +1,28 @@
 import mysql from "mysql2/promise";
 
-let pool: mysql.Pool | null = null;
+declare global {
+  // eslint-disable-next-line no-var
+  var _mysqlPool: mysql.Pool | undefined;
+}
 
 export function getPool(): mysql.Pool {
-  if (!pool) {
-    pool = mysql.createPool({
+  if (!global._mysqlPool) {
+    global._mysqlPool = mysql.createPool({
       host: process.env.MYSQL_HOST || "localhost",
       port: Number(process.env.MYSQL_PORT) || 3306,
       user: process.env.MYSQL_USER || "root",
       password: process.env.MYSQL_PASSWORD || "",
       database: process.env.MYSQL_DATABASE || "adpizzahub",
       waitForConnections: true,
-      connectionLimit: 10,
+      connectionLimit: 5,
+      maxIdle: 2,
+      idleTimeout: 15000,
       queueLimit: 0,
       enableKeepAlive: true,
       keepAliveInitialDelay: 0,
     });
   }
-  return pool;
+  return global._mysqlPool;
 }
 
 export function isDbConfigured(): boolean {
