@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongodb";
+import { connectDB } from "@/lib/db";
 import { SiteSettings } from "@/lib/models/SiteSettings";
-import { adminJsonResponse, isAdminSession } from "@/lib/admin-auth";
+import { adminJsonResponse, getAdminSession } from "@/lib/admin-auth";
+import { resolveRestaurant } from "@/lib/tenant";
 
 const KEY = "main";
 
@@ -47,10 +48,28 @@ function fromDoc(
   };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await connectDB();
-    const doc = await SiteSettings.findOne({ key: KEY }).lean();
+    const restaurant = await resolveRestaurant(request);
+    const rId = restaurant?.id ?? 1;
+
+    let doc = await SiteSettings.findOne({ key: KEY, restaurantId: rId }).lean();
+    if (!doc && restaurant) {
+      doc = await SiteSettings.findOneAndUpdate(
+        { key: KEY, restaurantId: rId },
+        {
+          $set: {
+            heroImages: ["", "", ""],
+            restaurantPhone: restaurant.phone,
+            restaurantAddress: "",
+            restaurantInstruction: "Order fresh pizza and get fast doorstep delivery!",
+            paymentQrImage: "",
+          },
+        }
+      );
+    }
+
     const response = NextResponse.json(fromDoc(doc));
     response.headers.set(
       "Cache-Control",
@@ -74,7 +93,8 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  if (!(await isAdminSession())) {
+  const session = await getAdminSession();
+  if (!session) {
     return adminJsonResponse("Unauthorized");
   }
   try {
@@ -87,7 +107,7 @@ export async function PUT(request: Request) {
     const paymentQrImage = str(body.paymentQrImage);
 
     await SiteSettings.findOneAndUpdate(
-      { key: KEY },
+      { key: KEY, restaurantId: session.restaurantId },
       {
         $set: {
           heroImages,
@@ -96,8 +116,7 @@ export async function PUT(request: Request) {
           restaurantPhone,
           paymentQrImage,
         },
-      },
-      { upsert: true, new: true, runValidators: true }
+      }
     );
     return NextResponse.json({
       ok: true,

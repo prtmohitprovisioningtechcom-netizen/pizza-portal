@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongodb";
+import { connectDB } from "@/lib/db";
 import { NavbarSettings } from "@/lib/models/NavbarSettings";
-import { SiteSettings } from "@/lib/models/SiteSettings";
-import { adminJsonResponse, isAdminSession } from "@/lib/admin-auth";
+import { adminJsonResponse, getAdminSession } from "@/lib/admin-auth";
+import { resolveRestaurant } from "@/lib/tenant";
 
 const KEY = "main";
 
@@ -31,53 +31,27 @@ function fromDoc(doc: {
   };
 }
 
-/** Copy legacy navbar fields from SiteSettings into NavbarSettings once. */
-async function migrateIfNeeded(): Promise<void> {
-  const nav = await NavbarSettings.findOne({ key: KEY }).lean();
-  const hasAny =
-    nav &&
-    (str(nav.logoUrl) ||
-      str(nav.brand) ||
-      str(nav.tagline) ||
-      str(nav.phone));
-  if (hasAny) return;
-
-  const site = await SiteSettings.findOne({ key: KEY }).lean();
-  if (!site) return;
-
-  const legacy = site as {
-    navbarLogo?: string | null;
-    navbarBrand?: string | null;
-    navbarTagline?: string | null;
-    restaurantPhone?: string | null;
-  };
-
-  const logoUrl = str(legacy.navbarLogo);
-  const brand = str(legacy.navbarBrand);
-  const tagline =
-    legacy.navbarTagline === undefined || legacy.navbarTagline === null
-      ? ""
-      : String(legacy.navbarTagline).trim();
-  const phone = str(legacy.restaurantPhone);
-
-  if (!logoUrl && !brand && !tagline && !phone) return;
-
-  await NavbarSettings.findOneAndUpdate(
-    { key: KEY },
-    { $set: { logoUrl, brand, tagline, phone } },
-    { upsert: true, new: true, runValidators: true }
-  );
-  await SiteSettings.updateOne(
-    { key: KEY },
-    { $unset: { navbarLogo: "", navbarBrand: "", navbarTagline: "" } }
-  );
-}
-
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await connectDB();
-    await migrateIfNeeded();
-    const doc = await NavbarSettings.findOne({ key: KEY }).lean();
+    const restaurant = await resolveRestaurant(request);
+    const rId = restaurant?.id ?? 1;
+
+    let doc = await NavbarSettings.findOne({ key: KEY, restaurantId: rId }).lean();
+    if (!doc && restaurant) {
+      doc = await NavbarSettings.findOneAndUpdate(
+        { key: KEY, restaurantId: rId },
+        {
+          $set: {
+            brand: restaurant.name,
+            phone: restaurant.phone,
+            tagline: "Fresh, Hot & Delicious",
+            logoUrl: "",
+          },
+        }
+      );
+    }
+
     const response = NextResponse.json(fromDoc(doc));
     response.headers.set(
       "Cache-Control",
@@ -100,7 +74,8 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  if (!(await isAdminSession())) {
+  const session = await getAdminSession();
+  if (!session) {
     return adminJsonResponse("Unauthorized");
   }
   try {
@@ -115,9 +90,8 @@ export async function PUT(request: Request) {
     const phone = str(body.phone);
 
     await NavbarSettings.findOneAndUpdate(
-      { key: KEY },
-      { $set: { logoUrl, brand, tagline, phone } },
-      { upsert: true, new: true, runValidators: true }
+      { key: KEY, restaurantId: session.restaurantId },
+      { $set: { logoUrl, brand, tagline, phone } }
     );
     return NextResponse.json({
       ok: true,

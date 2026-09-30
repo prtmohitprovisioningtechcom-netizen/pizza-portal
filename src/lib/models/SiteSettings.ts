@@ -1,9 +1,10 @@
 import { query, execute } from "@/lib/db";
-import type { RowDataPacket, ResultSetHeader } from "mysql2/promise";
+import type { RowDataPacket } from "mysql2/promise";
 
 export interface SiteSettingsDoc {
   _id: string;
   id: number;
+  restaurantId: number;
   key: string;
   heroImages: string[];
   restaurantAddress: string;
@@ -34,6 +35,7 @@ function mapRow(r: RowDataPacket): SiteSettingsDoc {
   return {
     _id: String(r.id),
     id: r.id,
+    restaurantId: Number(r.restaurantId ?? 1),
     key: r.setting_key ?? "main",
     heroImages: parseHeroImages(r.heroImages),
     restaurantAddress: r.restaurantAddress ?? "",
@@ -46,13 +48,20 @@ function mapRow(r: RowDataPacket): SiteSettingsDoc {
 }
 
 export const SiteSettings = {
-  findOne({ key }: { key?: string } = {}) {
+  findOne({
+    key,
+    restaurantId = 1,
+  }: {
+    key?: string;
+    restaurantId?: number | string;
+  } = {}) {
     const k = key ?? "main";
+    const rId = Number(restaurantId) || 1;
     return {
       async lean(): Promise<SiteSettingsDoc | null> {
         const rows = await query<RowDataPacket[]>(
-          "SELECT id, setting_key, heroImages, restaurantAddress, restaurantInstruction, restaurantPhone, paymentQrImage, createdAt, updatedAt FROM site_settings WHERE setting_key = ? LIMIT 1",
-          [k]
+          "SELECT id, restaurantId, setting_key, heroImages, restaurantAddress, restaurantInstruction, restaurantPhone, paymentQrImage, createdAt, updatedAt FROM site_settings WHERE setting_key = ? AND restaurantId = ? LIMIT 1",
+          [k, rId]
         );
         if (!rows || rows.length === 0) return null;
         return mapRow(rows[0]);
@@ -64,11 +73,17 @@ export const SiteSettings = {
   },
 
   async updateOne(_filter: any, _update: any): Promise<void> {
-    // No-op for legacy migration
+    // No-op
   },
 
   async findOneAndUpdate(
-    { key }: { key?: string },
+    {
+      key,
+      restaurantId = 1,
+    }: {
+      key?: string;
+      restaurantId?: number | string;
+    },
     update: {
       $set: {
         heroImages?: string[];
@@ -81,6 +96,7 @@ export const SiteSettings = {
     _opts?: Record<string, unknown>
   ): Promise<SiteSettingsDoc> {
     const k = key ?? "main";
+    const rId = Number(restaurantId) || 1;
     const data = update.$set || update;
     const heroImagesJson = JSON.stringify(parseHeroImages(data.heroImages));
     const restaurantAddress = data.restaurantAddress ?? "";
@@ -89,8 +105,8 @@ export const SiteSettings = {
     const paymentQrImage = data.paymentQrImage ?? "";
 
     await execute(
-      `INSERT INTO site_settings (setting_key, heroImages, restaurantAddress, restaurantInstruction, restaurantPhone, paymentQrImage)
-       VALUES (?, ?, ?, ?, ?, ?)
+      `INSERT INTO site_settings (restaurantId, setting_key, heroImages, restaurantAddress, restaurantInstruction, restaurantPhone, paymentQrImage)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          heroImages = VALUES(heroImages),
          restaurantAddress = VALUES(restaurantAddress),
@@ -99,6 +115,7 @@ export const SiteSettings = {
          paymentQrImage = VALUES(paymentQrImage),
          updatedAt = CURRENT_TIMESTAMP`,
       [
+        rId,
         k,
         heroImagesJson,
         restaurantAddress,
@@ -109,8 +126,8 @@ export const SiteSettings = {
     );
 
     const rows = await query<RowDataPacket[]>(
-      "SELECT id, setting_key, heroImages, restaurantAddress, restaurantInstruction, restaurantPhone, paymentQrImage, createdAt, updatedAt FROM site_settings WHERE setting_key = ? LIMIT 1",
-      [k]
+      "SELECT id, restaurantId, setting_key, heroImages, restaurantAddress, restaurantInstruction, restaurantPhone, paymentQrImage, createdAt, updatedAt FROM site_settings WHERE setting_key = ? AND restaurantId = ? LIMIT 1",
+      [k, rId]
     );
     return mapRow(rows[0]);
   },

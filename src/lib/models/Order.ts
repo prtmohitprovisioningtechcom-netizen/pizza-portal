@@ -5,6 +5,7 @@ import type { OrderItemDTO, OrderStatus } from "@/types";
 export interface OrderDoc {
   _id: string;
   id: number;
+  restaurantId: number;
   orderNumber?: string;
   customerName?: string;
   customerPhone?: string;
@@ -49,6 +50,7 @@ function mapRow(r: RowDataPacket): OrderDoc {
   return {
     _id: String(r.id),
     id: r.id,
+    restaurantId: Number(r.restaurantId ?? 1),
     orderNumber: r.orderNumber ?? undefined,
     customerName: r.customerName ?? "",
     customerPhone: r.customerPhone ?? "",
@@ -62,14 +64,20 @@ function mapRow(r: RowDataPacket): OrderDoc {
 }
 
 export const Order = {
-  find() {
+  find(filter?: { restaurantId?: number | string }) {
     return {
       sort(_sortObj?: Record<string, number>) {
         return {
           async lean(): Promise<OrderDoc[]> {
-            const rows = await query<RowDataPacket[]>(
-              "SELECT id, orderNumber, customerName, customerPhone, customerAddress, items, totalAmount, status, createdAt, updatedAt FROM orders ORDER BY createdAt DESC"
-            );
+            let sql = "SELECT id, restaurantId, orderNumber, customerName, customerPhone, customerAddress, items, totalAmount, status, createdAt, updatedAt FROM orders";
+            const params: any[] = [];
+            if (filter?.restaurantId !== undefined) {
+              sql += " WHERE restaurantId = ?";
+              params.push(Number(filter.restaurantId));
+            }
+            sql += " ORDER BY createdAt DESC";
+
+            const rows = await query<RowDataPacket[]>(sql, params);
             return rows.map(mapRow);
           },
           then(resolve: (val: OrderDoc[]) => void, reject?: (reason: any) => void) {
@@ -85,7 +93,7 @@ export const Order = {
       async lean(): Promise<OrderDoc | null> {
         if (!orderNumber) return null;
         const rows = await query<RowDataPacket[]>(
-          "SELECT id, orderNumber, customerName, customerPhone, customerAddress, items, totalAmount, status, createdAt, updatedAt FROM orders WHERE orderNumber = ? LIMIT 1",
+          "SELECT id, restaurantId, orderNumber, customerName, customerPhone, customerAddress, items, totalAmount, status, createdAt, updatedAt FROM orders WHERE orderNumber = ? LIMIT 1",
           [orderNumber]
         );
         if (!rows || rows.length === 0) return null;
@@ -110,6 +118,7 @@ export const Order = {
     }>;
     totalAmount: number;
     status?: OrderStatus;
+    restaurantId?: number | string;
   }): Promise<OrderDoc> {
     const itemsJson = JSON.stringify(
       data.items.map((i) => ({
@@ -119,10 +128,11 @@ export const Order = {
         price: i.price,
       }))
     );
+    const rId = Number(data.restaurantId) || 1;
 
     const result = await execute<ResultSetHeader>(
-      `INSERT INTO orders (orderNumber, customerName, customerPhone, customerAddress, items, totalAmount, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO orders (orderNumber, customerName, customerPhone, customerAddress, items, totalAmount, status, restaurantId)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         data.orderNumber,
         data.customerName,
@@ -131,12 +141,14 @@ export const Order = {
         itemsJson,
         data.totalAmount,
         data.status ?? "pending",
+        rId,
       ]
     );
 
     return {
       _id: String(result.insertId),
       id: result.insertId,
+      restaurantId: rId,
       orderNumber: data.orderNumber,
       customerName: data.customerName,
       customerPhone: data.customerPhone,
@@ -165,7 +177,7 @@ export const Order = {
     }
 
     const rows = await query<RowDataPacket[]>(
-      "SELECT id, orderNumber, customerName, customerPhone, customerAddress, items, totalAmount, status, createdAt, updatedAt FROM orders WHERE id = ? LIMIT 1",
+      "SELECT id, restaurantId, orderNumber, customerName, customerPhone, customerAddress, items, totalAmount, status, createdAt, updatedAt FROM orders WHERE id = ? LIMIT 1",
       [numId]
     );
     if (!rows || rows.length === 0) return null;

@@ -16,8 +16,9 @@ function normalize(data: Record<string, unknown>): NavbarDTO {
   };
 }
 
-export async function fetchNavbar(): Promise<NavbarDTO> {
+export async function fetchNavbar(slug?: string): Promise<NavbarDTO> {
   const { data } = await http.get<Record<string, unknown>>("/api/navbar", {
+    params: slug ? { slug } : undefined,
     headers: { "Cache-Control": "no-cache" },
   });
   return normalize(data);

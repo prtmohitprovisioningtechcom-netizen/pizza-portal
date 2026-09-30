@@ -8,7 +8,13 @@ import { useCart } from "@/features/cart/cart-context";
 import { fetchNavbar, type NavbarDTO } from "@/services/navbar";
 import { WavySeparator } from "./WavySeparator";
 
-export function Navbar({ onCartClick }: { onCartClick?: () => void }) {
+export function Navbar({
+  onCartClick,
+  restaurantSlug,
+}: {
+  onCartClick?: () => void;
+  restaurantSlug?: string;
+}) {
   const { itemCount } = useCart();
   const displayCount = itemCount > 99 ? "99+" : String(itemCount);
 
@@ -16,11 +22,11 @@ export function Navbar({ onCartClick }: { onCartClick?: () => void }) {
   const [ready, setReady] = useState(false);
 
   const load = useCallback(() => {
-    return fetchNavbar()
+    return fetchNavbar(restaurantSlug)
       .then(setData)
       .catch(() => setData({ logoUrl: "", brand: "", tagline: "", phone: "" }))
       .finally(() => setReady(true));
-  }, []);
+  }, [restaurantSlug]);
 
   useEffect(() => {
     void load();

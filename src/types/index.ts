@@ -47,6 +47,7 @@ export type PlaceOrderPayload = {
   customerName: string;
   customerPhone: string;
   customerAddress: string;
+  restaurantSlug?: string;
 };
 
 export type CategoryDTO = {

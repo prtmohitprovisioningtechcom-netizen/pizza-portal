@@ -1,20 +1,29 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongodb";
+import { connectDB } from "@/lib/db";
 import { Product } from "@/lib/models/Product";
-import { adminJsonResponse, isAdminSession } from "@/lib/admin-auth";
+import { adminJsonResponse, getAdminSession } from "@/lib/admin-auth";
 import { toProductDTO } from "@/lib/product-dto";
 import { resolveProductWrite } from "@/lib/product-payload";
+import { resolveRestaurant } from "@/lib/tenant";
 
 export async function GET(request: Request) {
   try {
     await connectDB();
+    const restaurant = await resolveRestaurant(request);
+    const rId = restaurant?.id ?? 1;
+
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
-    const filter = category ? { category } : {};
+    const filter: { category?: string; restaurantId: number } = {
+      restaurantId: rId,
+    };
+    if (category) filter.category = category;
+
     const docs = await Product.find(filter)
       .populate({ path: "categoryId", select: "name" })
       .sort({ createdAt: 1 })
       .lean();
+
     const products = docs.map((d) =>
       toProductDTO({
         ...d,
@@ -38,7 +47,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  if (!(await isAdminSession())) {
+  const session = await getAdminSession();
+  if (!session) {
     return adminJsonResponse("Unauthorized");
   }
   try {
@@ -51,7 +61,10 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    const doc = await Product.create(parsed);
+    const doc = await Product.create({
+      ...parsed,
+      restaurantId: session.restaurantId,
+    });
     return NextResponse.json(toProductDTO(doc.toObject()), { status: 201 });
   } catch (e) {
     console.error(e);

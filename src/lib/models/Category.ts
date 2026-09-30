@@ -4,6 +4,7 @@ import type { RowDataPacket, ResultSetHeader } from "mysql2/promise";
 export interface CategoryDoc {
   _id: string;
   id: number;
+  restaurantId: number;
   name: string;
   sortOrder: number;
   image: string;
@@ -15,6 +16,7 @@ function mapRow(r: RowDataPacket): CategoryDoc {
   return {
     _id: String(r.id),
     id: r.id,
+    restaurantId: Number(r.restaurantId ?? 1),
     name: r.name,
     sortOrder: r.sortOrder ?? 0,
     image: r.image ?? "",
@@ -24,21 +26,33 @@ function mapRow(r: RowDataPacket): CategoryDoc {
 }
 
 export const Category = {
-  find() {
+  find(filter?: { restaurantId?: number | string }) {
     return {
       sort(_sortObj?: Record<string, number>) {
         return {
           async lean(): Promise<CategoryDoc[]> {
-            const rows = await query<RowDataPacket[]>(
-              "SELECT id, name, sortOrder, image, createdAt, updatedAt FROM categories ORDER BY sortOrder ASC, name ASC"
-            );
+            let sql = "SELECT id, restaurantId, name, sortOrder, image, createdAt, updatedAt FROM categories";
+            const params: any[] = [];
+            if (filter?.restaurantId !== undefined) {
+              sql += " WHERE restaurantId = ?";
+              params.push(Number(filter.restaurantId));
+            }
+            sql += " ORDER BY sortOrder ASC, name ASC";
+
+            const rows = await query<RowDataPacket[]>(sql, params);
             return rows.map(mapRow);
           },
           async then(resolve: (val: CategoryDoc[]) => void, reject?: (reason: any) => void) {
             try {
-              const rows = await query<RowDataPacket[]>(
-                "SELECT id, name, sortOrder, image, createdAt, updatedAt FROM categories ORDER BY sortOrder ASC, name ASC"
-              );
+              let sql = "SELECT id, restaurantId, name, sortOrder, image, createdAt, updatedAt FROM categories";
+              const params: any[] = [];
+              if (filter?.restaurantId !== undefined) {
+                sql += " WHERE restaurantId = ?";
+                params.push(Number(filter.restaurantId));
+              }
+              sql += " ORDER BY sortOrder ASC, name ASC";
+
+              const rows = await query<RowDataPacket[]>(sql, params);
               resolve(rows.map(mapRow));
             } catch (err) {
               if (reject) reject(err);
@@ -49,7 +63,7 @@ export const Category = {
     };
   },
 
-  findOne(filter?: { name?: string }) {
+  findOne(filter?: { name?: string; restaurantId?: number | string }) {
     let sortDesc = false;
 
     const runner = {
@@ -61,11 +75,21 @@ export const Category = {
         return runner;
       },
       async lean(): Promise<CategoryDoc | null> {
-        let sql = "SELECT id, name, sortOrder, image, createdAt, updatedAt FROM categories";
+        let sql = "SELECT id, restaurantId, name, sortOrder, image, createdAt, updatedAt FROM categories";
+        const wheres: string[] = [];
         const params: any[] = [];
+
         if (filter?.name) {
-          sql += " WHERE name = ?";
+          wheres.push("name = ?");
           params.push(filter.name);
+        }
+        if (filter?.restaurantId !== undefined) {
+          wheres.push("restaurantId = ?");
+          params.push(Number(filter.restaurantId));
+        }
+
+        if (wheres.length > 0) {
+          sql += ` WHERE ${wheres.join(" AND ")}`;
         }
         if (sortDesc) {
           sql += " ORDER BY sortOrder DESC";
@@ -90,7 +114,7 @@ export const Category = {
       async lean(): Promise<CategoryDoc | null> {
         if (!numId || isNaN(numId)) return null;
         const rows = await query<RowDataPacket[]>(
-          "SELECT id, name, sortOrder, image, createdAt, updatedAt FROM categories WHERE id = ? LIMIT 1",
+          "SELECT id, restaurantId, name, sortOrder, image, createdAt, updatedAt FROM categories WHERE id = ? LIMIT 1",
           [numId]
         );
         if (!rows || rows.length === 0) return null;
@@ -100,7 +124,7 @@ export const Category = {
         try {
           if (!numId || isNaN(numId)) return resolve(null);
           const rows = await query<RowDataPacket[]>(
-            "SELECT id, name, sortOrder, image, createdAt, updatedAt FROM categories WHERE id = ? LIMIT 1",
+            "SELECT id, restaurantId, name, sortOrder, image, createdAt, updatedAt FROM categories WHERE id = ? LIMIT 1",
             [numId]
           );
           resolve(rows && rows.length > 0 ? mapRow(rows[0]) : null);
@@ -115,16 +139,20 @@ export const Category = {
     name: string;
     sortOrder?: number;
     image?: string;
+    restaurantId?: number | string;
   }): Promise<CategoryDoc> {
     const sortOrder = data.sortOrder ?? 0;
     const image = data.image ?? "";
+    const rId = Number(data.restaurantId) || 1;
+
     const result = await execute<ResultSetHeader>(
-      "INSERT INTO categories (name, sortOrder, image) VALUES (?, ?, ?)",
-      [data.name.trim(), sortOrder, image]
+      "INSERT INTO categories (name, sortOrder, image, restaurantId) VALUES (?, ?, ?, ?)",
+      [data.name.trim(), sortOrder, image, rId]
     );
     return {
       _id: String(result.insertId),
       id: result.insertId,
+      restaurantId: rId,
       name: data.name.trim(),
       sortOrder,
       image,
@@ -164,7 +192,7 @@ export const Category = {
     }
 
     const rows = await query<RowDataPacket[]>(
-      "SELECT id, name, sortOrder, image, createdAt, updatedAt FROM categories WHERE id = ? LIMIT 1",
+      "SELECT id, restaurantId, name, sortOrder, image, createdAt, updatedAt FROM categories WHERE id = ? LIMIT 1",
       [numId]
     );
     if (!rows || rows.length === 0) return null;

@@ -5,6 +5,7 @@ import type { ProductVariantItem } from "@/types";
 export interface ProductDoc {
   _id: string;
   id: number;
+  restaurantId: number;
   name: string;
   description: string;
   price: number;
@@ -49,6 +50,7 @@ function mapRow(r: RowDataPacket, populateCat = true): ProductDoc {
   return {
     _id: String(r.id),
     id: r.id,
+    restaurantId: Number(r.restaurantId ?? 1),
     name: r.name,
     description: r.description ?? "",
     price: Number(r.price),
@@ -63,7 +65,7 @@ function mapRow(r: RowDataPacket, populateCat = true): ProductDoc {
 }
 
 export const Product = {
-  find(filter?: { category?: string }) {
+  find(filter?: { category?: string; restaurantId?: number | string }) {
     let shouldPopulate = false;
     let sortDirection = "ASC";
 
@@ -81,14 +83,27 @@ export const Product = {
         return runner;
       },
       async lean(): Promise<ProductDoc[]> {
+        const wheres: string[] = [];
+        const params: any[] = [];
+
+        if (filter?.category) {
+          wheres.push("(p.category = ? OR c.name = ?)");
+          params.push(filter.category, filter.category);
+        }
+        if (filter?.restaurantId !== undefined) {
+          wheres.push("p.restaurantId = ?");
+          params.push(Number(filter.restaurantId));
+        }
+
+        const whereClause = wheres.length > 0 ? `WHERE ${wheres.join(" AND ")}` : "";
+
         const sql = `
           SELECT p.*, c.name as categoryName 
           FROM products p 
           LEFT JOIN categories c ON p.categoryId = c.id
-          ${filter?.category ? "WHERE p.category = ? OR c.name = ?" : ""}
+          ${whereClause}
           ORDER BY p.createdAt ${sortDirection}
         `;
-        const params = filter?.category ? [filter.category, filter.category] : [];
         const rows = await query<RowDataPacket[]>(sql, params);
         return rows.map((r) => mapRow(r, shouldPopulate));
       },
@@ -138,14 +153,16 @@ export const Product = {
     image?: string;
     isVeg?: boolean;
     variants?: ProductVariantItem[];
+    restaurantId?: number | string;
   }) {
     const catIdNum = data.categoryId ? Number(data.categoryId) : null;
     const variantsJson = JSON.stringify(data.variants ?? []);
     const isVeg = data.isVeg === false ? 0 : 1;
+    const rId = Number(data.restaurantId) || 1;
 
     const result = await execute<ResultSetHeader>(
-      `INSERT INTO products (name, description, price, categoryId, category, image, isVeg, variants) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO products (name, description, price, categoryId, category, image, isVeg, variants, restaurantId) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         data.name.trim(),
         data.description ?? "",
@@ -155,12 +172,14 @@ export const Product = {
         data.image ?? "",
         isVeg,
         variantsJson,
+        rId,
       ]
     );
 
     const doc: ProductDoc = {
       _id: String(result.insertId),
       id: result.insertId,
+      restaurantId: rId,
       name: data.name.trim(),
       description: data.description ?? "",
       price: data.price,
@@ -297,7 +316,6 @@ export const Product = {
       values.push(filter.category);
     }
     if (filter.$or) {
-      // e.g. [{ categoryId: null }, { categoryId: { $exists: false } }]
       wheres.push("categoryId IS NULL");
     }
 

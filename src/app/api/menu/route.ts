@@ -1,20 +1,20 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongodb";
+import { connectDB } from "@/lib/db";
 import { Category } from "@/lib/models/Category";
 import { Product } from "@/lib/models/Product";
 import { categoryDocToDTO } from "@/lib/category-dto";
 import { toProductDTO } from "@/lib/product-dto";
+import { resolveRestaurant } from "@/lib/tenant";
 
-/**
- * Single snapshot of categories + products (with category names resolved from Category docs).
- * Landing page uses this so chips + section headings always match one DB read.
- */
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await connectDB();
+    const restaurant = await resolveRestaurant(request);
+    const rId = restaurant?.id ?? 1;
+
     const [catDocs, productDocs] = await Promise.all([
-      Category.find().sort({ sortOrder: 1, name: 1 }).lean(),
-      Product.find()
+      Category.find({ restaurantId: rId }).sort({ sortOrder: 1, name: 1 }).lean(),
+      Product.find({ restaurantId: rId })
         .populate({ path: "categoryId", select: "name" })
         .sort({ createdAt: 1 })
         .lean(),
@@ -31,7 +31,18 @@ export async function GET() {
       })
     );
 
-    const res = NextResponse.json({ categories, products });
+    const res = NextResponse.json({
+      categories,
+      products,
+      restaurant: restaurant
+        ? {
+            id: restaurant.id,
+            name: restaurant.name,
+            slug: restaurant.slug,
+            phone: restaurant.phone,
+          }
+        : null,
+    });
     res.headers.set("Cache-Control", "private, no-store, must-revalidate");
     return res;
   } catch (e) {

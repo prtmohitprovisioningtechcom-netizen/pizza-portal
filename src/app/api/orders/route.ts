@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB, isValidId } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
-import { adminJsonResponse, isAdminSession } from "@/lib/admin-auth";
+import { adminJsonResponse, getAdminSession, isAdminSession } from "@/lib/admin-auth";
 import { MIN_ORDER_AMOUNT } from "@/lib/order-constants";
 import { generateOrderNumber } from "@/lib/order-number";
 import type { OrderDTO, OrderItemDTO } from "@/types";
@@ -45,12 +45,15 @@ function toDTO(doc: {
 }
 
 export async function GET() {
-  if (!(await isAdminSession())) {
+  const session = await getAdminSession();
+  if (!session) {
     return adminJsonResponse("Unauthorized");
   }
   try {
     await connectDB();
-    const docs = await Order.find().sort({ createdAt: -1 }).lean();
+    const docs = await Order.find({ restaurantId: session.restaurantId })
+      .sort({ createdAt: -1 })
+      .lean();
     const orders = docs.map((d) =>
       toDTO({
         _id: d._id,
@@ -76,7 +79,7 @@ export async function POST(request: Request) {
   try {
     await connectDB();
     const body = await request.json();
-    const { items, customerName, customerPhone, customerAddress } = body as {
+    const { items, customerName, customerPhone, customerAddress, restaurantSlug } = body as {
       items?: Array<{
         productId: string;
         name: string;
@@ -86,6 +89,7 @@ export async function POST(request: Request) {
       customerName?: string;
       customerPhone?: string;
       customerAddress?: string;
+      restaurantSlug?: string;
     };
     if (!items?.length) {
       return NextResponse.json({ error: "items required" }, { status: 400 });
@@ -119,6 +123,13 @@ export async function POST(request: Request) {
       );
     }
 
+    const { Restaurant } = await import("@/lib/models/Restaurant");
+    const { resolveRestaurant } = await import("@/lib/tenant");
+    const restaurant =
+      (restaurantSlug ? await Restaurant.findBySlug(restaurantSlug) : null) ||
+      (await resolveRestaurant(request));
+    const rId = restaurant?.id ?? 1;
+
     let orderNumber = generateOrderNumber();
     let doc;
     try {
@@ -135,6 +146,7 @@ export async function POST(request: Request) {
         })),
         totalAmount,
         status: "pending",
+        restaurantId: rId,
       });
     } catch (e: any) {
       if (
@@ -156,6 +168,7 @@ export async function POST(request: Request) {
           })),
           totalAmount,
           status: "pending",
+          restaurantId: rId,
         });
       } else {
         throw e;

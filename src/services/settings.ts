@@ -25,8 +25,9 @@ function normalizeResponse(data: Record<string, unknown>): SiteSettingsDTO {
   };
 }
 
-export async function fetchSettings(): Promise<SiteSettingsDTO> {
+export async function fetchSettings(slug?: string): Promise<SiteSettingsDTO> {
   const { data } = await http.get<Record<string, unknown>>("/api/settings", {
+    params: slug ? { slug } : undefined,
     headers: { "Cache-Control": "no-cache" },
   });
   return normalizeResponse(data);

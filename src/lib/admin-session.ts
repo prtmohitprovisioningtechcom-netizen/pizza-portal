@@ -5,17 +5,25 @@ import { getJwtSecret } from "@/lib/jwt-secret";
 
 export async function jsonWithAdminSession(
   adminId: string,
-  username: string
+  username: string,
+  restaurantId: number = 1,
+  restaurantSlug: string = "pizzahub"
 ): Promise<NextResponse> {
   const token = await new SignJWT({
     sub: adminId,
     u: username,
+    rId: restaurantId,
+    slug: restaurantSlug,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
     .sign(getJwtSecret());
 
-  const res = NextResponse.json({ ok: true });
+  const res = NextResponse.json({
+    ok: true,
+    restaurantId,
+    restaurantSlug,
+  });
   res.cookies.set(ADMIN_TOKEN_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

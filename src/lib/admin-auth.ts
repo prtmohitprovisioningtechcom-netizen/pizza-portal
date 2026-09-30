@@ -5,16 +5,33 @@ import { getJwtSecret } from "@/lib/jwt-secret";
 
 export { ADMIN_TOKEN_COOKIE } from "@/lib/admin-constants";
 
-export async function isAdminSession(): Promise<boolean> {
+export interface AdminSessionData {
+  adminId: string;
+  username: string;
+  restaurantId: number;
+  restaurantSlug: string;
+}
+
+export async function getAdminSession(): Promise<AdminSessionData | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(ADMIN_TOKEN_COOKIE)?.value;
-  if (!token) return false;
+  if (!token) return null;
   try {
-    await jwtVerify(token, getJwtSecret());
-    return true;
+    const { payload } = await jwtVerify(token, getJwtSecret());
+    return {
+      adminId: String(payload.sub ?? ""),
+      username: String(payload.u ?? ""),
+      restaurantId: Number(payload.rId ?? 1),
+      restaurantSlug: String(payload.slug ?? "pizzahub"),
+    };
   } catch {
-    return false;
+    return null;
   }
+}
+
+export async function isAdminSession(): Promise<boolean> {
+  const session = await getAdminSession();
+  return Boolean(session);
 }
 
 export function adminJsonResponse(message: string, status = 401) {

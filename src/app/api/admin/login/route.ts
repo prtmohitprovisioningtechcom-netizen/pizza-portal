@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { connectDB, isMongoConfigured } from "@/lib/mongodb";
 import { Admin } from "@/lib/models/Admin";
+import { Restaurant } from "@/lib/models/Restaurant";
 import { jsonWithAdminSession } from "@/lib/admin-session";
 
 export async function POST(request: Request) {
@@ -19,13 +20,22 @@ export async function POST(request: Request) {
     const body = await request.json();
     const username = typeof body.username === "string" ? body.username.trim() : "";
     const password = typeof body.password === "string" ? body.password : "";
+    const restaurantSlug = typeof body.restaurantSlug === "string" ? body.restaurantSlug.trim().toLowerCase() : "";
+
     if (!username || !password) {
       return NextResponse.json(
         { error: "Username and password required" },
         { status: 400 }
       );
     }
-    const admin = await Admin.findOne({ username }).lean();
+
+    let restaurantId: number | undefined;
+    if (restaurantSlug) {
+      const rest = await Restaurant.findBySlug(restaurantSlug);
+      if (rest) restaurantId = rest.id;
+    }
+
+    const admin = await Admin.findOne({ username, restaurantId }).lean();
     if (!admin) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
@@ -33,7 +43,11 @@ export async function POST(request: Request) {
     if (!ok) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
-    return jsonWithAdminSession(String(admin._id), admin.username);
+
+    const r = await Restaurant.findById(admin.restaurantId);
+    const slug = r?.slug ?? "pizzahub";
+
+    return jsonWithAdminSession(String(admin._id), admin.username, admin.restaurantId, slug);
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "Login failed" }, { status: 500 });

@@ -59,7 +59,11 @@ function sortCategories(list: CategoryDTO[]): CategoryDTO[] {
 /** Min categories to enable seamless horizontal loop (circular scroll). */
 const CATEGORY_STRIP_LOOP_MIN = 2;
 
-export function MenuView() {
+export function MenuView({
+  restaurantSlug,
+}: {
+  restaurantSlug?: string;
+} = {}) {
   const [products, setProducts] = useState<ProductDTO[]>([]);
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
   const [loading, setLoading] = useState(true);
@@ -112,7 +116,10 @@ export function MenuView() {
     if (isInitial) setLoading(true);
     setError(null);
     try {
-      const [menu, s] = await Promise.all([fetchMenu(), fetchSettings()]);
+      const [menu, s] = await Promise.all([
+        fetchMenu(restaurantSlug),
+        fetchSettings(restaurantSlug),
+      ]);
       setProducts(menu.products);
       setCategories(menu.categories);
       setHeroImages(s.heroImages);
@@ -121,7 +128,7 @@ export function MenuView() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [restaurantSlug]);
 
   useEffect(() => {
     load(true);
@@ -318,7 +325,7 @@ export function MenuView() {
       quantity: l.quantity,
       price: l.price,
     }));
-    const order = await placeOrder({ items, ...data });
+    const order = await placeOrder({ items, ...data, restaurantSlug });
     const id = order.orderNumber;
     clear();
     setCartOpen(false);
@@ -332,20 +339,22 @@ export function MenuView() {
       });
       setConfirmationOpen(true);
       
+      const trackingUrl = restaurantSlug
+        ? `/r/${restaurantSlug}/order/${encodeURIComponent(id)}`
+        : `/order/${encodeURIComponent(id)}`;
+
       // Auto redirect after 4 seconds
       setTimeout(() => {
-        router.push(`/order/${encodeURIComponent(id)}`);
+        router.push(trackingUrl);
       }, 4000);
     } else {
-      router.push("/");
+      router.push(restaurantSlug ? `/r/${restaurantSlug}` : "/");
     }
   };
 
-
-
   return (
     <div className="relative flex min-h-dvh flex-col overflow-x-hidden bg-[#faf8f5]">
-      <Navbar onCartClick={() => setCartOpen(true)} />
+      <Navbar onCartClick={() => setCartOpen(true)} restaurantSlug={restaurantSlug} />
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-2.5 py-2 sm:px-3 sm:py-3 md:px-6 md:py-4 flex flex-col">
         <>
