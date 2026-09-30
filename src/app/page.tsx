@@ -272,9 +272,9 @@ export default function PlatformLandingPage() {
           </div>
 
           {/* 2. Headline & Action Buttons BELOW the Image */}
-          <div className="mt-12 sm:mt-16 mx-auto max-w-4xl text-center space-y-5">
-            <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl leading-[1.12]">
-              <span className="block text-white drop-shadow-sm">
+          <div className="mt-10 sm:mt-14 mx-auto max-w-5xl text-center space-y-4">
+            <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl leading-[1.2]">
+              <span className="block whitespace-normal sm:whitespace-nowrap text-white drop-shadow-sm">
                 Launch Your Branded Restaurant Store
               </span>
               <span className="block mt-1 sm:mt-2 bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent font-black tracking-tight drop-shadow-md">
