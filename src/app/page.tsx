@@ -3,6 +3,7 @@
 import { useEffect, useState, useId } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   Store,
   Pizza,
@@ -27,6 +28,7 @@ import {
   HelpCircle,
   QrCode,
   Share2,
+  X,
 } from "lucide-react";
 import { http } from "@/services/http";
 
@@ -44,6 +46,9 @@ export default function PlatformLandingPage() {
   const [restaurants, setRestaurants] = useState<RestaurantItem[]>([]);
   const [loadingList, setLoadingList] = useState(true);
 
+  // Modal State for "Launch Store"
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Registration Form State
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -55,9 +60,6 @@ export default function PlatformLandingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
-  // Active tab for preview demo
-  const [previewTab, setPreviewTab] = useState<"storefront" | "admin">("storefront");
 
   // Open FAQ accordion index
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -159,7 +161,7 @@ export default function PlatformLandingPage() {
   return (
     <div className="min-h-screen bg-[#0f1117] text-white font-sans selection:bg-[#e60000] selection:text-white">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-50 border-b border-neutral-800 bg-[#0f1117]/90 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-neutral-800 bg-[#0f1117]/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-linear-to-tr from-[#e60000] to-orange-500 text-white shadow-lg shadow-red-500/25 group-hover:scale-105 transition">
@@ -179,11 +181,11 @@ export default function PlatformLandingPage() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-neutral-300">
-            <a href="#how-it-works" className="hover:text-white transition">
-              How It Works
-            </a>
             <a href="#whats-included" className="hover:text-white transition">
               What You Get
+            </a>
+            <a href="#how-it-works" className="hover:text-white transition">
+              How It Works
             </a>
             <a href="#live-stores" className="hover:text-white transition">
               Live Stores ({restaurants.length})
@@ -202,13 +204,14 @@ export default function PlatformLandingPage() {
               Partner Login
             </Link>
 
-            <a
-              href="#register"
-              className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-red-500/30 hover:opacity-95 transition"
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-red-500/30 hover:opacity-95 transition cursor-pointer"
             >
               <Store className="h-3.5 w-3.5" />
               <span>Launch Store</span>
-            </a>
+            </button>
           </div>
         </div>
       </header>
@@ -216,13 +219,13 @@ export default function PlatformLandingPage() {
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-12 pb-20 md:pt-16 md:pb-28">
         {/* Background glow effects */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-red-600/15 blur-[120px] pointer-events-none rounded-full" />
-        <div className="absolute top-1/3 right-10 w-[300px] h-[250px] bg-orange-600/10 blur-[100px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[350px] bg-red-600/15 blur-[130px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/3 right-10 w-[350px] h-[250px] bg-orange-600/10 blur-[100px] pointer-events-none rounded-full" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
-            {/* Left Content */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+            {/* Left Column: Hero Content */}
+            <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-950/60 px-4 py-1.5 text-xs font-bold text-red-400 backdrop-blur-xs">
                 <Sparkles className="h-3.5 w-3.5 text-orange-400 animate-pulse" />
                 <span>Restaurant Partner Ecosystem • 0% Commission</span>
@@ -235,7 +238,7 @@ export default function PlatformLandingPage() {
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg text-neutral-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="text-base sm:text-lg text-neutral-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
                 Hamare portal par apna restaurant add karein aur paayein apna khud ka{" "}
                 <span className="text-white font-bold underline decoration-red-500 decoration-2 underline-offset-4">
                   Branded Customer Storefront (/r/your-slug)
@@ -249,14 +252,15 @@ export default function PlatformLandingPage() {
 
               {/* Action buttons */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
-                <a
-                  href="#register"
-                  className="inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] transition"
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(true)}
+                  className="inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] transition cursor-pointer"
                 >
                   <Store className="h-4 w-4" />
                   <span>Register Your Restaurant Now</span>
                   <ArrowRight className="h-4 w-4" />
-                </a>
+                </button>
 
                 <Link
                   href="/r/pizzahub"
@@ -284,168 +288,228 @@ export default function PlatformLandingPage() {
               </div>
             </div>
 
-            {/* Right Card: Instant Partner Registration Form */}
-            <div id="register" className="lg:col-span-5 scroll-mt-24">
-              <div className="rounded-3xl border border-neutral-800 bg-linear-to-b from-neutral-900/90 to-neutral-950 p-6 sm:p-8 shadow-2xl shadow-black/80 relative overflow-hidden backdrop-blur-xl">
-                {/* Accent glow on form top */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-red-600 via-orange-500 to-amber-400" />
+            {/* Right Column: Hero Visual Graphic / Image replacing the inline form */}
+            <div className="lg:col-span-6 relative">
+              <div className="relative group rounded-3xl border border-neutral-800/80 bg-neutral-900/60 p-2.5 sm:p-3 shadow-2xl backdrop-blur-md overflow-hidden">
+                {/* Visual Glow behind image */}
+                <div className="absolute inset-0 bg-linear-to-tr from-red-600/10 via-transparent to-orange-500/15 pointer-events-none rounded-3xl" />
 
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-red-600/20 text-[#e60000] border border-red-500/30">
-                    <ChefHat className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h2 className="font-extrabold text-lg text-white">Partner Registration</h2>
-                    <p className="text-xs text-neutral-400">Launch your store in 2 minutes</p>
-                  </div>
+                {/* Floating Top Badge */}
+                <div className="absolute top-6 left-6 z-20 hidden sm:flex items-center gap-2 rounded-full border border-neutral-700/80 bg-neutral-950/90 px-3.5 py-1.5 text-xs font-bold text-white shadow-xl backdrop-blur-md">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Customer Store + Kitchen Admin Included</span>
                 </div>
 
-                <form onSubmit={handleRegister} className="space-y-3.5">
-                  <div>
-                    <label htmlFor={restNameId} className="block text-xs font-semibold text-neutral-300 mb-1">
-                      Restaurant Name *
-                    </label>
-                    <input
-                      id={restNameId}
-                      required
-                      type="text"
-                      placeholder="e.g. Royal Pizza Hub or Domino Delight"
-                      value={name}
-                      onChange={(e) => handleNameChange(e.target.value)}
-                      className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3.5 py-2.5 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#e60000] focus:ring-1 focus:ring-red-500"
-                    />
-                  </div>
+                {/* The Generated High-Tech Visual Image */}
+                <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-neutral-800">
+                  <img
+                    src="/partner-platform-hero.jpg"
+                    alt="Restaurant Partner Platform - Admin Dashboard & Customer Storefront"
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  {/* Subtle inner dark gradient overlay */}
+                  <div className="absolute inset-0 bg-linear-to-t from-neutral-950/80 via-transparent to-neutral-950/20" />
+                </div>
 
-                  <div>
-                    <label htmlFor={restSlugId} className="block text-xs font-semibold text-neutral-300 mb-1">
-                      Your Unique Store URL *
-                    </label>
-                    <div className="flex items-center rounded-xl border border-neutral-800 bg-neutral-950 overflow-hidden focus-within:border-[#e60000] focus-within:ring-1 focus-within:ring-red-500">
-                      <span className="px-3 text-xs text-neutral-400 font-mono select-none bg-neutral-900 border-r border-neutral-800 py-2.5">
-                        /r/
-                      </span>
-                      <input
-                        id={restSlugId}
-                        required
-                        type="text"
-                        placeholder="royal-pizza"
-                        value={slug}
-                        onChange={(e) => {
-                          setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
-                          setSlugEdited(true);
-                        }}
-                        className="w-full bg-transparent px-3 py-2.5 text-sm text-white placeholder-neutral-500 outline-none font-mono"
-                      />
-                    </div>
-                    <p className="text-[11px] text-neutral-400 mt-1">
-                      Customers will order at: <span className="font-mono text-orange-400">/r/{slug || "your-slug"}</span>
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <div>
-                      <label htmlFor={ownerNameId} className="block text-xs font-semibold text-neutral-300 mb-1">
-                        Owner Name
-                      </label>
-                      <input
-                        id={ownerNameId}
-                        type="text"
-                        placeholder="Mohit Kumar"
-                        value={ownerName}
-                        onChange={(e) => setOwnerName(e.target.value)}
-                        className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#e60000]"
-                      />
+                {/* Floating Bottom Card Banner */}
+                <div className="absolute bottom-6 left-6 right-6 z-20 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-neutral-800/90 bg-neutral-950/90 p-3.5 sm:px-4 sm:py-3 shadow-2xl backdrop-blur-md">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-600/20 text-[#e60000] border border-red-500/30">
+                      <ChefHat className="h-5 w-5" />
                     </div>
                     <div>
-                      <label htmlFor={phoneId} className="block text-xs font-semibold text-neutral-300 mb-1">
-                        Phone / WhatsApp
-                      </label>
-                      <input
-                        id={phoneId}
-                        type="tel"
-                        placeholder="9876543210"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#e60000]"
-                      />
+                      <p className="text-xs font-bold text-white leading-tight">Ready to get your store?</p>
+                      <p className="text-[11px] text-neutral-400">Setup takes only 2 minutes</p>
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-2.5 pt-1 border-t border-neutral-800/80">
-                    <div>
-                      <label htmlFor={adminUserId} className="block text-xs font-semibold text-neutral-300 mb-1">
-                        Admin Username *
-                      </label>
-                      <input
-                        id={adminUserId}
-                        required
-                        minLength={3}
-                        type="text"
-                        placeholder="admin"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#e60000]"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor={adminPassId} className="block text-xs font-semibold text-neutral-300 mb-1">
-                        Admin Password *
-                      </label>
-                      <input
-                        id={adminPassId}
-                        required
-                        minLength={6}
-                        type="password"
-                        placeholder="••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#e60000]"
-                      />
-                    </div>
-                  </div>
-
-                  {errorMsg && (
-                    <div className="rounded-xl bg-red-950/80 p-2.5 text-xs text-red-300 border border-red-800/80">
-                      {errorMsg}
-                    </div>
-                  )}
-
-                  {successMsg && (
-                    <div className="rounded-xl bg-emerald-950/80 p-2.5 text-xs text-emerald-300 border border-emerald-800/80 font-medium">
-                      {successMsg}
-                    </div>
-                  )}
 
                   <button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full rounded-xl bg-linear-to-r from-[#e60000] to-orange-600 py-3 text-sm font-bold text-white shadow-lg shadow-red-600/30 hover:opacity-95 disabled:opacity-50 transition flex items-center justify-center gap-2 mt-2"
+                    type="button"
+                    onClick={() => setIsModalOpen(true)}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-linear-to-r from-[#e60000] to-orange-600 px-4 py-2 text-xs font-bold text-white shadow-md hover:opacity-90 transition cursor-pointer"
                   >
-                    {submitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Setting Up Your Store & Admin…
-                      </>
-                    ) : (
-                      <>
-                        Launch My Restaurant Store
-                        <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
+                    <span>Launch Store</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </button>
-
-                  <p className="text-[11px] text-center text-neutral-400 mt-1">
-                    Already a registered partner?{" "}
-                    <Link href="/admin/login" className="text-orange-400 font-semibold hover:underline">
-                      Login to Admin
-                    </Link>
-                  </p>
-                </form>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Modal Dialog: "Launch Store" / Partner Registration Form */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-lg rounded-3xl border border-neutral-800 bg-neutral-950 p-6 sm:p-8 shadow-2xl shadow-red-950/40">
+            {/* Top decorative gradient line */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-red-600 via-orange-500 to-amber-400 rounded-t-3xl" />
+
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-5 right-5 flex h-8 w-8 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800 transition cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-5 pr-8">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-600/20 text-[#e60000] border border-red-500/30">
+                <ChefHat className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="font-extrabold text-xl text-white">Partner Registration</h2>
+                <p className="text-xs text-neutral-400">Launch your store in 2 minutes</p>
+              </div>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleRegister} className="space-y-3.5">
+              <div>
+                <label htmlFor={restNameId} className="block text-xs font-semibold text-neutral-300 mb-1">
+                  Restaurant Name *
+                </label>
+                <input
+                  id={restNameId}
+                  required
+                  type="text"
+                  placeholder="e.g. Royal Pizza Hub or Domino Delight"
+                  value={name}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3.5 py-2.5 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#e60000] focus:ring-1 focus:ring-red-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor={restSlugId} className="block text-xs font-semibold text-neutral-300 mb-1">
+                  Your Unique Store URL *
+                </label>
+                <div className="flex items-center rounded-xl border border-neutral-800 bg-neutral-900 overflow-hidden focus-within:border-[#e60000] focus-within:ring-1 focus-within:ring-red-500">
+                  <span className="px-3 text-xs text-neutral-400 font-mono select-none bg-neutral-800/80 border-r border-neutral-700/80 py-2.5">
+                    /r/
+                  </span>
+                  <input
+                    id={restSlugId}
+                    required
+                    type="text"
+                    placeholder="royal-pizza"
+                    value={slug}
+                    onChange={(e) => {
+                      setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
+                      setSlugEdited(true);
+                    }}
+                    className="w-full bg-transparent px-3 py-2.5 text-sm text-white placeholder-neutral-500 outline-none font-mono"
+                  />
+                </div>
+                <p className="text-[11px] text-neutral-400 mt-1">
+                  Customers will order at: <span className="font-mono text-orange-400">/r/{slug || "your-slug"}</span>
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label htmlFor={ownerNameId} className="block text-xs font-semibold text-neutral-300 mb-1">
+                    Owner Name
+                  </label>
+                  <input
+                    id={ownerNameId}
+                    type="text"
+                    placeholder="Mohit Kumar"
+                    value={ownerName}
+                    onChange={(e) => setOwnerName(e.target.value)}
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#e60000]"
+                  />
+                </div>
+                <div>
+                  <label htmlFor={phoneId} className="block text-xs font-semibold text-neutral-300 mb-1">
+                    Phone / WhatsApp
+                  </label>
+                  <input
+                    id={phoneId}
+                    type="tel"
+                    placeholder="9876543210"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#e60000]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5 pt-1 border-t border-neutral-800/80">
+                <div>
+                  <label htmlFor={adminUserId} className="block text-xs font-semibold text-neutral-300 mb-1">
+                    Admin Username *
+                  </label>
+                  <input
+                    id={adminUserId}
+                    required
+                    minLength={3}
+                    type="text"
+                    placeholder="admin"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#e60000]"
+                  />
+                </div>
+                <div>
+                  <label htmlFor={adminPassId} className="block text-xs font-semibold text-neutral-300 mb-1">
+                    Admin Password *
+                  </label>
+                  <input
+                    id={adminPassId}
+                    required
+                    minLength={6}
+                    type="password"
+                    placeholder="••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#e60000]"
+                  />
+                </div>
+              </div>
+
+              {errorMsg && (
+                <div className="rounded-xl bg-red-950/80 p-2.5 text-xs text-red-300 border border-red-800/80">
+                  {errorMsg}
+                </div>
+              )}
+
+              {successMsg && (
+                <div className="rounded-xl bg-emerald-950/80 p-2.5 text-xs text-emerald-300 border border-emerald-800/80 font-medium">
+                  {successMsg}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full rounded-xl bg-linear-to-r from-[#e60000] to-orange-600 py-3 text-sm font-bold text-white shadow-lg shadow-red-600/30 hover:opacity-95 disabled:opacity-50 transition flex items-center justify-center gap-2 mt-2 cursor-pointer"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Setting Up Your Store & Admin…
+                  </>
+                ) : (
+                  <>
+                    Launch My Restaurant Store
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </button>
+
+              <p className="text-[11px] text-center text-neutral-400 mt-2">
+                Already a registered partner?{" "}
+                <Link href="/admin/login" className="text-orange-400 font-semibold hover:underline">
+                  Login to Admin
+                </Link>
+              </p>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* What You Get: The 2 Core Deliverables */}
       <section id="whats-included" className="py-20 bg-neutral-950 border-t border-neutral-800">
@@ -602,9 +666,9 @@ export default function PlatformLandingPage() {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/20 text-[#e60000] mb-4">
                 <Store className="h-5 w-5" />
               </div>
-              <h3 className="font-bold text-lg text-white">Fill Partner Form</h3>
+              <h3 className="font-bold text-lg text-white">1. Launch Store Form</h3>
               <p className="text-xs text-neutral-400 mt-2 leading-relaxed">
-                Upar diye gaye form me Restaurant Name, Store Slug, aur Admin Username/Password dalein. 1 click me store create ho jata hai.
+                Launch Store button click karke Restaurant Name, Store Slug, aur Admin Username/Password dalein. 1 click me store create ho jata hai.
               </p>
             </div>
 
@@ -615,7 +679,7 @@ export default function PlatformLandingPage() {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-600/20 text-orange-400 mb-4">
                 <ChefHat className="h-5 w-5" />
               </div>
-              <h3 className="font-bold text-lg text-white">Add Dishes & Pricing</h3>
+              <h3 className="font-bold text-lg text-white">2. Add Dishes & Pricing</h3>
               <p className="text-xs text-neutral-400 mt-2 leading-relaxed">
                 Apne Admin Panel me login karein. Categories (Pizzas, Drinks, Combos) banayein aur dishes add karein photo aur prices ke saath.
               </p>
@@ -628,7 +692,7 @@ export default function PlatformLandingPage() {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600/20 text-emerald-400 mb-4">
                 <QrCode className="h-5 w-5" />
               </div>
-              <h3 className="font-bold text-lg text-white">Share URL & Start Orders</h3>
+              <h3 className="font-bold text-lg text-white">3. Share URL & Start Orders</h3>
               <p className="text-xs text-neutral-400 mt-2 leading-relaxed">
                 Apna link (/r/[your-slug]) WhatsApp aur Instagram par share karein ya table QR code banayein. Direct 0% commission orders receive karein!
               </p>
@@ -666,7 +730,7 @@ export default function PlatformLandingPage() {
             </div>
           ) : restaurants.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-neutral-800 p-12 text-center text-neutral-500">
-              Koi restaurant registered nahi hai. Upar diye gaye form se pehla restaurant register karein!
+              Koi restaurant registered nahi hai. Launch Store button se pehla restaurant register karein!
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -796,7 +860,7 @@ export default function PlatformLandingPage() {
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full flex items-center justify-between p-5 text-left text-sm font-bold text-white hover:text-red-400 transition"
+                    className="w-full flex items-center justify-between p-5 text-left text-sm font-bold text-white hover:text-red-400 transition cursor-pointer"
                   >
                     <span>{f.q}</span>
                     <ChevronDown
@@ -829,14 +893,15 @@ export default function PlatformLandingPage() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <a
-              href="#register"
-              className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-red-600/30 hover:scale-105 transition"
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-red-600/30 hover:scale-105 transition cursor-pointer"
             >
               <Store className="h-4 w-4" />
               <span>Launch Your Store Now (Free)</span>
               <ArrowRight className="h-4 w-4" />
-            </a>
+            </button>
 
             <Link
               href="/admin/login"
