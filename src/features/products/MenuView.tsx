@@ -340,7 +340,7 @@ export function MenuView({
       setConfirmationOpen(true);
       
       const trackingUrl = restaurantSlug
-        ? `/r/${restaurantSlug}/order/${encodeURIComponent(id)}`
+        ? `/${restaurantSlug}/order/${encodeURIComponent(id)}`
         : `/order/${encodeURIComponent(id)}`;
 
       // Auto redirect after 4 seconds
@@ -348,7 +348,7 @@ export function MenuView({
         router.push(trackingUrl);
       }, 4000);
     } else {
-      router.push(restaurantSlug ? `/r/${restaurantSlug}` : "/");
+      router.push(restaurantSlug ? `/${restaurantSlug}` : "/");
     }
   };
 

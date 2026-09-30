@@ -52,7 +52,7 @@ export default function AdminDashboardLayout({
   }, []);
 
   const storeUrl = adminInfo?.restaurantSlug
-    ? `/r/${adminInfo.restaurantSlug}`
+    ? `/${adminInfo.restaurantSlug}`
     : "/";
 
   return (
@@ -79,7 +79,7 @@ export default function AdminDashboardLayout({
                 {adminInfo?.restaurantName || "Ad Pizza Hub"}
               </h2>
               <p className="text-xs text-neutral-500 font-mono">
-                /r/{adminInfo?.restaurantSlug || "pizzahub"}
+                /{adminInfo?.restaurantSlug || "pizzahub"}
               </p>
             </div>
 

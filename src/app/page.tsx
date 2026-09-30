@@ -138,7 +138,7 @@ export default function PlatformLandingPage() {
   const faqs = [
     {
       q: "What do I get once I register as a restaurant partner?",
-      a: "Upon registration, you immediately receive two fully-integrated systems: (1) Your own branded Customer Storefront URL (/r/your-slug) where diners can browse and order directly, and (2) A private, secure Kitchen & Store Admin Panel (/admin) to manage your menu, pricing, categories, marketing banners, and live kitchen orders in real time.",
+      a: "Upon registration, you immediately receive two fully-integrated systems: (1) Your own branded Customer Storefront URL (/your-slug) where diners can browse and order directly, and (2) A private, secure Kitchen & Store Admin Panel (/admin) to manage your menu, pricing, categories, marketing banners, and live kitchen orders in real time.",
     },
     {
       q: "Are there any hidden platform fees or order commissions?",
@@ -150,7 +150,7 @@ export default function PlatformLandingPage() {
     },
     {
       q: "How do customers order from my restaurant?",
-      a: "You get a dedicated direct link (e.g. /r/pizzahub). You can add this URL to your Instagram bio, WhatsApp messages, Google Business profile, or print it as a QR code on tables. Customers simply open the link in any mobile browser and order seamlessly without downloading an app.",
+      a: "You get a dedicated direct link (e.g. /pizzahub). You can add this URL to your Instagram bio, WhatsApp messages, Google Business profile, or print it as a QR code on tables. Customers simply open the link in any mobile browser and order seamlessly without downloading an app.",
     },
     {
       q: "Can other restaurants access my customer data or sales figures?",
@@ -283,7 +283,7 @@ export default function PlatformLandingPage() {
             </h1>
 
             <p className="text-sm sm:text-base text-neutral-300 max-w-xl mx-auto leading-relaxed">
-              Get your custom ordering link (<span className="text-orange-400 font-mono font-bold">/r/your-slug</span>) and a dedicated live kitchen admin dashboard. Direct orders with 100% profit.
+              Get your custom ordering link (<span className="text-orange-400 font-mono font-bold">/your-slug</span>) and a dedicated live kitchen admin dashboard. Direct orders with 100% profit.
             </p>
 
             {/* Action Buttons */}
@@ -299,7 +299,7 @@ export default function PlatformLandingPage() {
               </button>
 
               <Link
-                href="/r/pizzahub"
+                href="/pizzahub"
                 className="inline-flex items-center gap-2 rounded-full border border-neutral-700 bg-neutral-900/80 px-6 py-3.5 text-sm font-bold text-neutral-200 shadow-sm hover:bg-neutral-800 hover:border-neutral-600 transition"
               >
                 <UtensilsCrossed className="h-4 w-4 text-[#e60000]" />
@@ -310,7 +310,7 @@ export default function PlatformLandingPage() {
             {/* Clean Badges */}
             <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs font-semibold">
               <span className="rounded-full bg-neutral-900/90 border border-neutral-800 px-3 py-1 text-neutral-300">
-                🚀 <span className="font-mono text-white">/r/[your-slug]</span>
+                🚀 <span className="font-mono text-white">/[your-slug]</span>
               </span>
               <span className="rounded-full bg-emerald-950/70 border border-emerald-800/80 px-3 py-1 text-emerald-400">
                 💰 0% Commission
@@ -373,7 +373,7 @@ export default function PlatformLandingPage() {
                 </label>
                 <div className="flex items-center rounded-xl border border-neutral-800 bg-neutral-900 overflow-hidden focus-within:border-[#e60000] focus-within:ring-1 focus-within:ring-red-500">
                   <span className="px-3 text-xs text-neutral-400 font-mono select-none bg-neutral-800/80 border-r border-neutral-700/80 py-2.5">
-                    /r/
+                    /
                   </span>
                   <input
                     id={restSlugId}
@@ -389,7 +389,7 @@ export default function PlatformLandingPage() {
                   />
                 </div>
                 <p className="text-[11px] text-neutral-400 mt-1">
-                  Customers will order at: <span className="font-mono text-orange-400">/r/{slug || "your-slug"}</span>
+                  Customers will order at: <span className="font-mono text-orange-400">/{slug || "your-slug"}</span>
                 </p>
               </div>
 
@@ -529,7 +529,7 @@ export default function PlatformLandingPage() {
                   Your Branded Online Storefront
                 </h3>
                 <p className="text-xs font-mono text-orange-400 mt-1">
-                  URL: https://your-domain/r/[your-slug]
+                  URL: https://your-domain/[your-slug]
                 </p>
 
                 <p className="text-sm text-neutral-400 mt-4 leading-relaxed">
@@ -552,7 +552,7 @@ export default function PlatformLandingPage() {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                    <span>Live Order Tracking page (/r/[slug]/order/[id])</span>
+                    <span>Live Order Tracking page (/[slug]/order/[id])</span>
                   </li>
                 </ul>
               </div>
@@ -560,7 +560,7 @@ export default function PlatformLandingPage() {
               <div className="mt-8 pt-6 border-t border-neutral-800 flex items-center justify-between">
                 <span className="text-xs text-neutral-400 font-medium">Ready out of the box</span>
                 <Link
-                  href="/r/pizzahub"
+                  href="/pizzahub"
                   className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-4 py-2 text-xs font-bold text-white hover:opacity-90 transition"
                 >
                   <span>Preview Storefront</span>
@@ -679,7 +679,7 @@ export default function PlatformLandingPage() {
               </div>
               <h3 className="font-bold text-lg text-white">3. Share URL & Start Orders</h3>
               <p className="text-xs text-neutral-400 mt-2 leading-relaxed">
-                Share your direct ordering link (/r/[your-slug]) on WhatsApp, Instagram bio, or print QR codes for tables. Receive direct orders with 0% commission!
+                Share your direct ordering link (/[your-slug]) on WhatsApp, Instagram bio, or print QR codes for tables. Receive direct orders with 0% commission!
               </p>
             </div>
           </div>
@@ -738,7 +738,7 @@ export default function PlatformLandingPage() {
                     <h3 className="font-extrabold text-xl text-white group-hover:text-red-400 transition">
                       {r.name}
                     </h3>
-                    <p className="text-xs font-mono text-orange-400 mt-1">/r/{r.slug}</p>
+                    <p className="text-xs font-mono text-orange-400 mt-1">/{r.slug}</p>
                     {r.phone && (
                       <p className="text-xs text-neutral-400 mt-3">
                         Contact: <span className="text-neutral-200">{r.phone}</span>
@@ -748,7 +748,7 @@ export default function PlatformLandingPage() {
 
                   <div className="mt-6 pt-5 border-t border-neutral-800/80 flex items-center justify-between gap-3">
                     <Link
-                      href={`/r/${r.slug}`}
+                      href={`/${r.slug}`}
                       className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-[#e60000] to-orange-600 px-4 py-2 text-xs font-bold text-white shadow-md hover:opacity-95 transition"
                     >
                       <span>Visit Store</span>
@@ -756,7 +756,7 @@ export default function PlatformLandingPage() {
                     </Link>
 
                     <Link
-                      href={`/r/${r.slug}/admin`}
+                      href={`/${r.slug}/admin`}
                       className="inline-flex items-center gap-1 text-xs font-semibold text-neutral-400 hover:text-white transition"
                     >
                       <Lock className="h-3 w-3" />
@@ -862,7 +862,7 @@ export default function PlatformLandingPage() {
           <div className="flex items-center gap-6 text-neutral-400">
             <a href="#how-it-works" className="hover:text-white">How It Works</a>
             <a href="#whats-included" className="hover:text-white">What You Get</a>
-            <Link href="/r/pizzahub" className="hover:text-white">Demo Store</Link>
+            <Link href="/pizzahub" className="hover:text-white">Demo Store</Link>
             <Link href="/admin/login" className="hover:text-white">Admin Login</Link>
           </div>
 
