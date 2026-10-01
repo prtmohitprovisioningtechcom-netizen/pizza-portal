@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -15,6 +15,8 @@ import {
   Eye,
   EyeOff,
   UserPlus,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { http } from "@/services/http";
 
@@ -26,7 +28,23 @@ export default function SuperAdminRegisterPage() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("platform_theme") as "dark" | "light" | null;
+      if (saved) setTheme(saved);
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("platform_theme", next);
+  };
+
+  const isDark = theme === "dark";
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,19 +71,23 @@ export default function SuperAdminRegisterPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#07090e] text-white flex flex-col justify-between overflow-hidden selection:bg-purple-600 selection:text-white">
+    <div
+      className={`relative min-h-screen flex flex-col justify-between overflow-hidden transition-colors duration-300 ${
+        isDark
+          ? "bg-[#07090e] text-white selection:bg-purple-600 selection:text-white"
+          : "bg-neutral-50 text-neutral-900 selection:bg-purple-500 selection:text-white"
+      }`}
+    >
       {/* Ambient background mesh glow effects */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-purple-600/15 blur-[160px] rounded-full" />
-      <div className="pointer-events-none absolute -bottom-40 right-10 w-[500px] h-[400px] bg-indigo-600/10 blur-[150px] rounded-full" />
-      <div className="pointer-events-none absolute top-1/3 -left-32 w-[400px] h-[400px] bg-pink-600/10 blur-[140px] rounded-full" />
-
-      {/* Subtle Grid Pattern Overlay */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-          backgroundSize: "32px 32px",
-        }}
+        className={`pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] rounded-full blur-[160px] ${
+          isDark ? "bg-purple-600/15" : "bg-purple-300/30"
+        }`}
+      />
+      <div
+        className={`pointer-events-none absolute -bottom-40 right-10 w-[500px] h-[400px] rounded-full blur-[150px] ${
+          isDark ? "bg-indigo-600/10" : "bg-indigo-200/40"
+        }`}
       />
 
       {/* Top Navbar */}
@@ -73,40 +95,75 @@ export default function SuperAdminRegisterPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/"
-            className="group inline-flex items-center gap-1.5 rounded-full border border-neutral-800/80 bg-neutral-900/60 px-3 py-1.5 text-xs font-medium text-neutral-400 backdrop-blur-md hover:border-neutral-700 hover:text-white transition"
+            className={`group inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-md transition ${
+              isDark
+                ? "border-neutral-800/80 bg-neutral-900/60 text-neutral-400 hover:border-neutral-700 hover:text-white"
+                : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 shadow-xs"
+            }`}
           >
-            <Home className="h-3.5 w-3.5 group-hover:scale-110 transition-transform text-neutral-400 group-hover:text-purple-400" />
+            <Home className="h-3.5 w-3.5 group-hover:scale-110 transition-transform text-purple-500" />
             <span>Home</span>
           </Link>
           <Link
             href="/super-admin/login"
-            className="group inline-flex items-center gap-1.5 rounded-full border border-neutral-800/80 bg-neutral-900/60 px-3 py-1.5 text-xs font-medium text-neutral-400 backdrop-blur-md hover:border-neutral-700 hover:text-white transition"
+            className={`group inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-md transition ${
+              isDark
+                ? "border-neutral-800/80 bg-neutral-900/60 text-neutral-400 hover:border-neutral-700 hover:text-white"
+                : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 shadow-xs"
+            }`}
           >
             <ArrowLeft className="h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
             <span>Sign In</span>
           </Link>
         </div>
 
-        <div className="flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-950/30 px-3.5 py-1.5 text-xs font-semibold text-purple-300 backdrop-blur-md">
-          <span className="h-2 w-2 rounded-full bg-purple-400 animate-pulse" />
-          <span className="tracking-wide">Super Admin Console</span>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            title={`Switch to ${isDark ? "Light" : "Dark"} mode`}
+            className={`p-2 rounded-full border transition cursor-pointer ${
+              isDark
+                ? "border-neutral-800 bg-neutral-900 text-amber-300 hover:bg-neutral-800"
+                : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 shadow-xs"
+            }`}
+          >
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4 text-neutral-700" />}
+          </button>
+
+          <div
+            className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold backdrop-blur-md ${
+              isDark
+                ? "border-purple-500/20 bg-purple-950/30 text-purple-300"
+                : "border-purple-200 bg-purple-50 text-purple-700"
+            }`}
+          >
+            <span className="h-2 w-2 rounded-full bg-purple-500 animate-pulse" />
+            <span className="tracking-wide">Super Admin Console</span>
+          </div>
         </div>
       </header>
 
       {/* Registration Card */}
       <main className="relative z-10 mx-auto w-full max-w-md px-4 py-8 my-auto">
-        <div className="relative rounded-3xl border border-neutral-800/90 bg-neutral-900/80 p-6 sm:p-9 shadow-2xl shadow-purple-950/40 backdrop-blur-xl">
+        <div
+          className={`relative rounded-3xl border p-6 sm:p-9 shadow-2xl backdrop-blur-xl ${
+            isDark
+              ? "border-neutral-800/90 bg-neutral-900/80 shadow-purple-950/40"
+              : "border-neutral-200 bg-white/95 shadow-neutral-200"
+          }`}
+        >
           {/* Top glowing gradient line */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-purple-600 via-indigo-500 to-pink-500 rounded-t-3xl" />
 
           <div className="text-center mb-6">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-tr from-purple-600/25 to-indigo-600/25 text-purple-400 border border-purple-500/30 mb-4 shadow-lg shadow-purple-500/20">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-tr from-purple-600/25 to-indigo-600/25 text-purple-500 border border-purple-500/30 mb-4 shadow-lg shadow-purple-500/20">
               <UserPlus className="h-7 w-7" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            <h1 className={`text-2xl sm:text-3xl font-black tracking-tight ${isDark ? "text-white" : "text-neutral-900"}`}>
               Register Super Admin
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-400 mt-1.5 max-w-xs mx-auto leading-relaxed">
+            <p className={`text-xs sm:text-sm mt-1.5 max-w-xs mx-auto leading-relaxed ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
               Create a new master administrator account with full platform permissions
             </p>
           </div>
@@ -114,98 +171,155 @@ export default function SuperAdminRegisterPage() {
           <form onSubmit={handleRegister} className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-neutral-300 flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
+                <label className={`text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${isDark ? "text-neutral-300" : "text-neutral-700"}`}>
+                  <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
                   Full Name
                 </label>
-                <span className="text-[10px] text-neutral-500 font-mono">Required</span>
+                <span className="text-[10px] text-neutral-400 font-mono">Required</span>
               </div>
-              <div className="group relative flex items-center rounded-2xl border border-neutral-700/80 bg-neutral-950/80 p-1.5 focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-500/20 focus-within:bg-neutral-950 transition-all duration-200 shadow-inner">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-400 group-focus-within:bg-purple-600/20 group-focus-within:border-purple-500/40 group-focus-within:text-purple-300 transition-colors">
+              <div
+                className={`group relative flex items-center rounded-2xl border p-1.5 transition-all duration-200 shadow-inner focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-500/20 ${
+                  isDark
+                    ? "border-neutral-700/80 bg-neutral-950/80 focus-within:bg-neutral-950"
+                    : "border-neutral-300 bg-neutral-50 focus-within:bg-white"
+                }`}
+              >
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+                    isDark
+                      ? "bg-neutral-900 border-neutral-800 text-neutral-400 group-focus-within:bg-purple-600/20 group-focus-within:border-purple-500/40 group-focus-within:text-purple-300"
+                      : "bg-white border-neutral-200 text-neutral-500 group-focus-within:bg-purple-50 group-focus-within:border-purple-400 group-focus-within:text-purple-600"
+                  }`}
+                >
                   <User className="h-4 w-4" />
                 </div>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Mohit Kumar"
+                  placeholder="e.g. Administrator Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-transparent px-3 py-2 text-sm font-medium text-white placeholder:text-neutral-500 focus:outline-none"
+                  className={`w-full bg-transparent px-3 py-2 text-sm font-medium focus:outline-none ${
+                    isDark ? "text-white placeholder:text-neutral-500" : "text-neutral-900 placeholder:text-neutral-400"
+                  }`}
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-neutral-300 flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
-                  Phone Number
+                <label className={`text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${isDark ? "text-neutral-300" : "text-neutral-700"}`}>
+                  <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                  Mobile Number
                 </label>
-                <span className="text-[10px] text-neutral-500 font-mono">Optional</span>
+                <span className="text-[10px] text-neutral-400 font-mono">Optional</span>
               </div>
-              <div className="group relative flex items-center rounded-2xl border border-neutral-700/80 bg-neutral-950/80 p-1.5 focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-500/20 focus-within:bg-neutral-950 transition-all duration-200 shadow-inner">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-400 group-focus-within:bg-purple-600/20 group-focus-within:border-purple-500/40 group-focus-within:text-purple-300 transition-colors">
+              <div
+                className={`group relative flex items-center rounded-2xl border p-1.5 transition-all duration-200 shadow-inner focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-500/20 ${
+                  isDark
+                    ? "border-neutral-700/80 bg-neutral-950/80 focus-within:bg-neutral-950"
+                    : "border-neutral-300 bg-neutral-50 focus-within:bg-white"
+                }`}
+              >
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+                    isDark
+                      ? "bg-neutral-900 border-neutral-800 text-neutral-400 group-focus-within:bg-purple-600/20 group-focus-within:border-purple-500/40 group-focus-within:text-purple-300"
+                      : "bg-white border-neutral-200 text-neutral-500 group-focus-within:bg-purple-50 group-focus-within:border-purple-400 group-focus-within:text-purple-600"
+                  }`}
+                >
                   <Phone className="h-4 w-4" />
                 </div>
                 <input
                   type="tel"
-                  placeholder="9876543210"
+                  placeholder="Phone number"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-transparent px-3 py-2 text-sm font-medium text-white placeholder:text-neutral-500 focus:outline-none"
+                  className={`w-full bg-transparent px-3 py-2 text-sm font-medium focus:outline-none ${
+                    isDark ? "text-white placeholder:text-neutral-500" : "text-neutral-900 placeholder:text-neutral-400"
+                  }`}
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-neutral-300 flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
-                  Super Admin Username
+                <label className={`text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${isDark ? "text-neutral-300" : "text-neutral-700"}`}>
+                  <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                  Master Username
                 </label>
-                <span className="text-[10px] text-neutral-500 font-mono">Min 3 chars</span>
+                <span className="text-[10px] text-neutral-400 font-mono">Min 3 chars</span>
               </div>
-              <div className="group relative flex items-center rounded-2xl border border-neutral-700/80 bg-neutral-950/80 p-1.5 focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-500/20 focus-within:bg-neutral-950 transition-all duration-200 shadow-inner">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-400 group-focus-within:bg-purple-600/20 group-focus-within:border-purple-500/40 group-focus-within:text-purple-300 transition-colors">
+              <div
+                className={`group relative flex items-center rounded-2xl border p-1.5 transition-all duration-200 shadow-inner focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-500/20 ${
+                  isDark
+                    ? "border-neutral-700/80 bg-neutral-950/80 focus-within:bg-neutral-950"
+                    : "border-neutral-300 bg-neutral-50 focus-within:bg-white"
+                }`}
+              >
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+                    isDark
+                      ? "bg-neutral-900 border-neutral-800 text-neutral-400 group-focus-within:bg-purple-600/20 group-focus-within:border-purple-500/40 group-focus-within:text-purple-300"
+                      : "bg-white border-neutral-200 text-neutral-500 group-focus-within:bg-purple-50 group-focus-within:border-purple-400 group-focus-within:text-purple-600"
+                  }`}
+                >
                   <User className="h-4 w-4" />
                 </div>
                 <input
                   type="text"
                   required
-                  minLength={3}
-                  placeholder="e.g. masteradmin"
+                  placeholder="Enter username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-transparent px-3 py-2 text-sm font-medium text-white placeholder:text-neutral-500 focus:outline-none"
+                  className={`w-full bg-transparent px-3 py-2 text-sm font-medium focus:outline-none ${
+                    isDark ? "text-white placeholder:text-neutral-500" : "text-neutral-900 placeholder:text-neutral-400"
+                  }`}
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-neutral-300 flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
-                  Master Password
+                <label className={`text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${isDark ? "text-neutral-300" : "text-neutral-700"}`}>
+                  <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                  Password
                 </label>
-                <span className="text-[10px] text-neutral-500 font-mono">Min 6 chars</span>
+                <span className="text-[10px] text-neutral-400 font-mono">Min 6 chars</span>
               </div>
-              <div className="group relative flex items-center rounded-2xl border border-neutral-700/80 bg-neutral-950/80 p-1.5 focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-500/20 focus-within:bg-neutral-950 transition-all duration-200 shadow-inner">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-400 group-focus-within:bg-purple-600/20 group-focus-within:border-purple-500/40 group-focus-within:text-purple-300 transition-colors">
+              <div
+                className={`group relative flex items-center rounded-2xl border p-1.5 transition-all duration-200 shadow-inner focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-500/20 ${
+                  isDark
+                    ? "border-neutral-700/80 bg-neutral-950/80 focus-within:bg-neutral-950"
+                    : "border-neutral-300 bg-neutral-50 focus-within:bg-white"
+                }`}
+              >
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+                    isDark
+                      ? "bg-neutral-900 border-neutral-800 text-neutral-400 group-focus-within:bg-purple-600/20 group-focus-within:border-purple-500/40 group-focus-within:text-purple-300"
+                      : "bg-white border-neutral-200 text-neutral-500 group-focus-within:bg-purple-50 group-focus-within:border-purple-400 group-focus-within:text-purple-600"
+                  }`}
+                >
                   <Lock className="h-4 w-4" />
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
                   required
                   minLength={6}
-                  placeholder="••••••••••••"
+                  placeholder="Enter password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-transparent px-3 py-2 text-sm font-medium text-white placeholder:text-neutral-500 focus:outline-none"
+                  className={`w-full bg-transparent px-3 py-2 text-sm font-medium focus:outline-none ${
+                    isDark ? "text-white placeholder:text-neutral-500" : "text-neutral-900 placeholder:text-neutral-400"
+                  }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-800/80 transition-colors cursor-pointer mr-0.5"
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors cursor-pointer mr-0.5 ${
+                    isDark ? "text-neutral-400 hover:text-white hover:bg-neutral-800/80" : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-200/60"
+                  }`}
                   title={showPassword ? "Hide Password" : "Show Password"}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -214,8 +328,14 @@ export default function SuperAdminRegisterPage() {
             </div>
 
             {errorMsg && (
-              <div className="rounded-xl bg-red-950/80 p-3 text-xs text-red-300 border border-red-800/80 flex items-start gap-2">
-                <span className="font-bold text-red-400">Error:</span>
+              <div
+                className={`rounded-xl p-3 text-xs border flex items-start gap-2 ${
+                  isDark
+                    ? "bg-red-950/80 text-red-300 border-red-800/80"
+                    : "bg-red-50 text-red-800 border-red-200"
+                }`}
+              >
+                <span className="font-bold text-red-500">Error:</span>
                 <span>{errorMsg}</span>
               </div>
             )}
@@ -223,12 +343,12 @@ export default function SuperAdminRegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-linear-to-r from-purple-600 via-indigo-600 to-pink-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-purple-600/30 hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 transition flex items-center justify-center gap-2 cursor-pointer mt-3"
+              className="w-full rounded-xl bg-linear-to-r from-purple-600 via-indigo-600 to-pink-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-purple-600/30 hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 transition flex items-center justify-center gap-2 cursor-pointer mt-2"
             >
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Creating Super Admin Account…</span>
+                  <span>Registering Super Admin…</span>
                 </>
               ) : (
                 <>
@@ -239,22 +359,28 @@ export default function SuperAdminRegisterPage() {
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-neutral-800/80 text-center">
-            <p className="text-xs text-neutral-400">
-              Already have credentials?{" "}
+          {/* Footer Navigation within Card */}
+          <div
+            className={`mt-7 pt-5 border-t text-center ${
+              isDark ? "border-neutral-800/80" : "border-neutral-100"
+            }`}
+          >
+            <p className={`text-xs ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
+              Already have Super Admin credentials?{" "}
               <Link
                 href="/super-admin/login"
-                className="text-purple-400 font-bold hover:text-purple-300 hover:underline transition"
+                className="text-purple-500 font-bold hover:text-purple-400 hover:underline transition"
               >
-                Sign In to Super Admin
+                Sign In to Console
               </Link>
             </p>
           </div>
         </div>
       </main>
 
-      <footer className="relative z-10 text-center py-5 text-xs text-neutral-500">
-        PizzaHub Multi-Tenant Super Administrator Console • Secure TLS 1.3
+      {/* Footer */}
+      <footer className={`relative z-10 text-center py-5 text-xs ${isDark ? "text-neutral-500" : "text-neutral-400"}`}>
+        PizzaHub Partner Hub • Super Administrator Console • Secure TLS 1.3
       </footer>
     </div>
   );

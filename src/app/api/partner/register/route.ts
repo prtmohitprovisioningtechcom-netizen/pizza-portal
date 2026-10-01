@@ -4,7 +4,6 @@ import { Restaurant } from "@/lib/models/Restaurant";
 import { Admin } from "@/lib/models/Admin";
 import { NavbarSettings } from "@/lib/models/NavbarSettings";
 import { SiteSettings } from "@/lib/models/SiteSettings";
-import { Category } from "@/lib/models/Category";
 
 export async function POST(request: Request) {
   try {
@@ -85,6 +84,7 @@ export async function POST(request: Request) {
       username,
       passwordHash,
       restaurantId: restaurant.id,
+      role: "admin",
     });
 
     // 3. Create default Navbar Settings
@@ -107,26 +107,14 @@ export async function POST(request: Request) {
         $set: {
           heroImages: ["", "", ""],
           restaurantAddress: "",
-          restaurantInstruction: "Order fresh pizza and get fast doorstep delivery!",
+          restaurantInstruction: "Order fresh and get fast doorstep delivery!",
           restaurantPhone: phone,
           paymentQrImage: "",
         },
       }
     );
 
-    // 5. Create default categories
-    await Category.create({
-      name: "Pizzas",
-      sortOrder: 1,
-      image: "",
-      restaurantId: restaurant.id,
-    });
-    await Category.create({
-      name: "Beverages",
-      sortOrder: 2,
-      image: "",
-      restaurantId: restaurant.id,
-    });
+    // No hardcoded default categories - partner starts clean with their own categories.
 
     // Return response informing the partner that their store is registered and pending Super Admin verification
     return NextResponse.json({
@@ -136,8 +124,14 @@ export async function POST(request: Request) {
       restaurantSlug: restaurant.slug,
       message: `Registration received for '${name}'! Your store is pending Super Admin verification & payment confirmation. Once activated, your storefront and admin login will be live.`,
     });
-  } catch (e) {
+  } catch (e: any) {
     console.error("Partner register error:", e);
+    if (e?.code === "ER_DUP_ENTRY" || e?.message?.includes("Duplicate entry")) {
+      return NextResponse.json(
+        { error: "This restaurant URL slug or username is already taken. Please choose another unique slug." },
+        { status: 409 }
+      );
+    }
     return NextResponse.json(
       { error: "Failed to register restaurant partner" },
       { status: 500 }

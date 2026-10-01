@@ -38,6 +38,7 @@ export type OrderDTO = {
   items: OrderItemDTO[];
   totalAmount: number;
   status: OrderStatus;
+  restaurantSlug?: string;
   createdAt?: string;
   updatedAt?: string;
 };

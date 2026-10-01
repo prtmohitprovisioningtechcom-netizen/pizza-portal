@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Check, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { Check, Trash2, ArrowLeft } from "lucide-react";
 import { fetchOrdersAdmin, updateOrderStatus, deleteOrder } from "@/services/orders";
 import type { OrderDTO, OrderStatus } from "@/types";
 
@@ -80,6 +81,15 @@ export default function AdminOrdersPage() {
   return (
     <div className="space-y-6">
       <div>
+        <div className="flex items-center gap-3 mb-3">
+          <Link
+            href="/admin"
+            className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Back to Dashboard</span>
+          </Link>
+        </div>
         <h1 className="text-2xl font-bold text-neutral-900">Orders</h1>
         <p className="text-sm text-neutral-600">
           Update status — customers see the same steps on their order tracking

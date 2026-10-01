@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   HelpCircle,
   ArrowRight,
+  ArrowLeft,
 } from "lucide-react";
 
 export default function FaqPage() {
@@ -76,11 +77,11 @@ export default function FaqPage() {
               <span className={`font-extrabold text-xl tracking-tight block leading-tight ${isDark ? "text-white" : "text-neutral-900"}`}>
                 Pizza<span className="text-[#e60000]">Hub</span>{" "}
                 <span className="text-[10px] bg-red-950/80 border border-red-800/80 text-red-300 font-semibold px-2 py-0.5 rounded-full ml-1 uppercase tracking-wider">
-                  Partner OS
+                  Partner Hub
                 </span>
               </span>
               <span className={`text-[10px] font-medium ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
-                Multi-Tenant Restaurant Platform
+                Restaurant Partner & Merchant Network
               </span>
             </div>
           </Link>
@@ -147,7 +148,21 @@ export default function FaqPage() {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-4xl px-4 sm:px-6 py-14 space-y-10">
+      <main className="mx-auto max-w-4xl px-4 sm:px-6 py-10 space-y-10">
+        <div>
+          <Link
+            href="/"
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
+              isDark
+                ? "border-neutral-800 bg-neutral-900 text-neutral-300 hover:text-white hover:bg-neutral-800"
+                : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 shadow-xs"
+            }`}
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>← Back to Home</span>
+          </Link>
+        </div>
+
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <span className="inline-flex items-center gap-1 rounded-full bg-red-500/10 border border-red-500/20 text-[#e60000] px-3.5 py-1 text-xs font-bold uppercase tracking-wider">
             <HelpCircle className="h-3.5 w-3.5" />

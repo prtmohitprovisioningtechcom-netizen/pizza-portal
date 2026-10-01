@@ -9,7 +9,8 @@ import {
 } from "@/services/categories";
 import { uploadImage } from "@/services/products";
 import type { CategoryDTO } from "@/types";
-import { Upload } from "lucide-react";
+import { Upload, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminCategoriesPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -117,14 +118,23 @@ export default function AdminCategoriesPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">Categories</h1>
-        <p className="text-sm text-neutral-600">
-          Names should match what you pick on products.{" "}
-          <strong>New categories</strong> are added at the <strong>bottom</strong> of the menu
-          automatically. When editing, you can change sort order (lower = higher on page).
-        </p>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Back to Dashboard</span>
+            </Link>
+          </div>
+          <h1 className="text-2xl font-bold mt-3">Categories</h1>
+          <p className="text-sm text-neutral-600">
+            Create and organize menu categories for your store. Names will match what you pick on products.
+          </p>
+        </div>
       </div>
       {msg && (
         <div className="rounded-xl bg-amber-50 px-4 py-3 text-sm">{msg}</div>

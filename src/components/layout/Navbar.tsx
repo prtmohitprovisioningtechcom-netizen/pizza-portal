@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Phone } from "lucide-react";
+import { ShoppingCart, Phone, ArrowLeft } from "lucide-react";
 import { useCart } from "@/features/cart/cart-context";
 import { fetchNavbar, type NavbarDTO } from "@/services/navbar";
 import { WavySeparator } from "./WavySeparator";
@@ -103,6 +103,23 @@ export function Navbar({
         </Link>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
+          <Link
+            href="/stores"
+            className="hidden sm:inline-flex items-center gap-1 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] font-semibold text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition"
+            title="Browse other restaurants"
+          >
+            <ArrowLeft className="h-3 w-3" />
+            <span>Stores</span>
+          </Link>
+
+          <Link
+            href="/admin/login"
+            className="hidden sm:inline-flex items-center gap-1 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] font-semibold text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition"
+            title="Partner Store Login"
+          >
+            <span>Login</span>
+          </Link>
+
           {!ready ? (
             <span
               className="inline-flex h-8 w-19 shrink-0 animate-pulse rounded-full bg-neutral-200 sm:h-9 md:h-10"

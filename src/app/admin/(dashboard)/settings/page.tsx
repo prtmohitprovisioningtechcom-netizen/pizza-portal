@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Upload } from "lucide-react";
+import Link from "next/link";
+import { Upload, ArrowLeft, Lock, Copy, Check, ExternalLink } from "lucide-react";
 import {
   fetchSettings,
   updateSettings,
@@ -45,10 +46,28 @@ export default function AdminSettingsPage() {
     });
   };
 
+  const [adminInfo, setAdminInfo] = useState<{
+    restaurantId: number;
+    restaurantSlug: string;
+    username: string;
+  } | null>(null);
+  const [copiedSlug, setCopiedSlug] = useState(false);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setS(await fetchSettings());
+      const [settingsData, meRes] = await Promise.all([
+        fetchSettings(),
+        fetch("/api/admin/me").then((r) => r.json()).catch(() => null),
+      ]);
+      setS(settingsData);
+      if (meRes?.ok) {
+        setAdminInfo({
+          restaurantId: meRes.restaurantId,
+          restaurantSlug: meRes.restaurantSlug,
+          username: meRes.username,
+        });
+      }
     } catch {
       setMsg("Failed to load settings — check your login and database connection.");
     } finally {
@@ -104,6 +123,15 @@ export default function AdminSettingsPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6 sm:space-y-8">
       <div>
+        <div className="flex items-center gap-3 mb-3">
+          <Link
+            href="/admin"
+            className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Back to Dashboard</span>
+          </Link>
+        </div>
         <h1 className="text-xl sm:text-2xl font-bold">Site settings</h1>
         <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-neutral-600">
           Hero banners, outlet details, and payment QR. The menu navbar is edited under{" "}
@@ -121,6 +149,89 @@ export default function AdminSettingsPage() {
         <p className="text-neutral-500">Loading…</p>
       ) : (
         <>
+          {/* Store Identification & Permanent Slug URL (Read-Only) */}
+          <div className="mb-6 rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-neutral-100 text-neutral-700">
+                    <Lock className="h-4 w-4 text-neutral-600" />
+                  </span>
+                  <div>
+                    <h2 className="text-base font-bold text-neutral-900">
+                      Store Public Web Address (Slug URL)
+                    </h2>
+                    <p className="text-xs text-neutral-500">
+                      Unique identifier & permanent storefront link for your customers.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800 border border-amber-200">
+                  <Lock className="h-3 w-3" />
+                  Locked • Read Only
+                </span>
+                {adminInfo?.restaurantSlug && (
+                  <a
+                    href={`/${adminInfo.restaurantSlug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-100 transition"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Visit Live Store
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-neutral-200 bg-neutral-50/70 p-3.5 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                <div className="min-w-0 flex-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 block mb-1">
+                    Store URL Slug
+                  </span>
+                  <div className="flex items-center gap-2 font-mono text-sm font-bold text-neutral-900 bg-white border border-neutral-200/90 rounded-lg px-3 py-2 w-full max-w-md">
+                    <span className="text-neutral-400 select-none">/</span>
+                    <span className="text-[#e60000]">{adminInfo?.restaurantSlug || "pizzahub"}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (typeof window !== "undefined" && adminInfo?.restaurantSlug) {
+                        const fullUrl = `${window.location.origin}/${adminInfo.restaurantSlug}`;
+                        navigator.clipboard.writeText(fullUrl);
+                        setCopiedSlug(true);
+                        setTimeout(() => setCopiedSlug(false), 2000);
+                      }
+                    }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 px-3.5 py-2 text-xs font-semibold transition shadow-sm"
+                  >
+                    {copiedSlug ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-emerald-400" />
+                        <span>Copied Store Link!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5 text-neutral-300" />
+                        <span>Copy Storefront URL</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <p className="mt-3 text-[11px] leading-relaxed text-neutral-500 border-t border-neutral-200/60 pt-2.5">
+                ℹ️ <strong>Permanent URL Notice:</strong> To protect customer bookmarks, QR codes, delivery aggregators, and search engine listings, store URL slugs cannot be altered once created.
+              </p>
+            </div>
+          </div>
+
           <div className="space-y-6">
             {[0, 1, 2].map((i) => (
               <div
@@ -210,7 +321,7 @@ export default function AdminSettingsPage() {
                   onChange={(e) =>
                     setS((p) => ({ ...p, restaurantPhone: e.target.value }))
                   }
-                  placeholder="+91 98765 43210"
+                  placeholder="Enter contact number"
                 />
               </label>
               <label className="block">

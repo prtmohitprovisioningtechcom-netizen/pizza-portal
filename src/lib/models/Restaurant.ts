@@ -12,8 +12,32 @@ export interface RestaurantDoc {
   paymentStatus: "paid" | "pending" | "failed";
   paymentAmount: number;
   paymentNotes: string;
+  assignedTo?: number;
+  assignedName?: string;
+  assignedRole?: string;
+  taskNotes?: string;
+  taskStatus?: "pending" | "in_progress" | "completed";
+  monthlyFee?: number;
+  billingDueDate?: string;
+  subscriptionStatus?: "active" | "expired" | "suspended";
+  lastPaymentDate?: string;
+  adminId?: number;
+  adminUsername?: string;
+  adminRole?: string;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+function formatDateStr(d: any): string | undefined {
+  if (!d) return undefined;
+  if (typeof d === "string") return d.slice(0, 10);
+  if (d instanceof Date) {
+    const yr = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, "0");
+    const da = String(d.getDate()).padStart(2, "0");
+    return `${yr}-${mo}-${da}`;
+  }
+  return String(d).slice(0, 10);
 }
 
 function mapRow(r: RowDataPacket): RestaurantDoc {
@@ -28,6 +52,18 @@ function mapRow(r: RowDataPacket): RestaurantDoc {
     paymentStatus: (r.paymentStatus as RestaurantDoc["paymentStatus"]) ?? "pending",
     paymentAmount: Number(r.paymentAmount ?? 0),
     paymentNotes: r.paymentNotes ?? "",
+    assignedTo: r.assignedTo !== undefined && r.assignedTo !== null ? Number(r.assignedTo) : undefined,
+    assignedName: r.assignedName ? String(r.assignedName) : undefined,
+    assignedRole: r.assignedRole ? String(r.assignedRole) : undefined,
+    taskNotes: r.taskNotes ? String(r.taskNotes) : "",
+    taskStatus: (r.taskStatus as RestaurantDoc["taskStatus"]) ?? "pending",
+    monthlyFee: r.monthlyFee !== undefined && r.monthlyFee !== null ? Number(r.monthlyFee) : 0,
+    billingDueDate: formatDateStr(r.billingDueDate),
+    subscriptionStatus: (r.subscriptionStatus as RestaurantDoc["subscriptionStatus"]) ?? "active",
+    lastPaymentDate: formatDateStr(r.lastPaymentDate),
+    adminId: r.adminId !== undefined && r.adminId !== null ? Number(r.adminId) : undefined,
+    adminUsername: r.adminUsername ? String(r.adminUsername) : undefined,
+    adminRole: r.adminRole ? String(r.adminRole) : undefined,
     createdAt: r.createdAt ? new Date(r.createdAt) : undefined,
     updatedAt: r.updatedAt ? new Date(r.updatedAt) : undefined,
   };
@@ -37,7 +73,10 @@ export const Restaurant = {
   async findBySlug(slug: string): Promise<RestaurantDoc | null> {
     const s = slug.trim().toLowerCase();
     const rows = await query<RowDataPacket[]>(
-      "SELECT id, name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes, createdAt, updatedAt FROM restaurants WHERE slug = ? AND status = 'active' LIMIT 1",
+      `SELECT id, name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes,
+              assignedTo, assignedName, assignedRole, taskNotes, taskStatus,
+              monthlyFee, billingDueDate, subscriptionStatus, lastPaymentDate, createdAt, updatedAt
+       FROM restaurants WHERE slug = ? AND status = 'active' LIMIT 1`,
       [s]
     );
     if (!rows || rows.length === 0) return null;
@@ -47,7 +86,10 @@ export const Restaurant = {
   async findBySlugAny(slug: string): Promise<RestaurantDoc | null> {
     const s = slug.trim().toLowerCase();
     const rows = await query<RowDataPacket[]>(
-      "SELECT id, name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes, createdAt, updatedAt FROM restaurants WHERE slug = ? LIMIT 1",
+      `SELECT id, name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes,
+              assignedTo, assignedName, assignedRole, taskNotes, taskStatus,
+              monthlyFee, billingDueDate, subscriptionStatus, lastPaymentDate, createdAt, updatedAt
+       FROM restaurants WHERE slug = ? LIMIT 1`,
       [s]
     );
     if (!rows || rows.length === 0) return null;
@@ -58,7 +100,10 @@ export const Restaurant = {
     const numId = Number(id);
     if (!numId || isNaN(numId)) return null;
     const rows = await query<RowDataPacket[]>(
-      "SELECT id, name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes, createdAt, updatedAt FROM restaurants WHERE id = ? LIMIT 1",
+      `SELECT id, name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes,
+              assignedTo, assignedName, assignedRole, taskNotes, taskStatus,
+              monthlyFee, billingDueDate, subscriptionStatus, lastPaymentDate, createdAt, updatedAt
+       FROM restaurants WHERE id = ? LIMIT 1`,
       [numId]
     );
     if (!rows || rows.length === 0) return null;
@@ -67,14 +112,26 @@ export const Restaurant = {
 
   async findAllActive(): Promise<RestaurantDoc[]> {
     const rows = await query<RowDataPacket[]>(
-      "SELECT id, name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes, createdAt, updatedAt FROM restaurants WHERE status = 'active' ORDER BY createdAt DESC"
+      `SELECT id, name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes,
+              assignedTo, assignedName, assignedRole, taskNotes, taskStatus,
+              monthlyFee, billingDueDate, subscriptionStatus, lastPaymentDate, createdAt, updatedAt
+       FROM restaurants WHERE status = 'active' ORDER BY createdAt DESC`
     );
     return rows.map(mapRow);
   },
 
   async findAll(): Promise<RestaurantDoc[]> {
     const rows = await query<RowDataPacket[]>(
-      "SELECT id, name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes, createdAt, updatedAt FROM restaurants ORDER BY createdAt DESC"
+      `SELECT 
+        r.id, r.name, r.slug, r.ownerName, r.phone, r.email, r.status, r.paymentStatus, r.paymentAmount, r.paymentNotes,
+        r.assignedTo, r.assignedName, r.assignedRole, r.taskNotes, r.taskStatus,
+        r.monthlyFee, r.billingDueDate, r.subscriptionStatus, r.lastPaymentDate, r.createdAt, r.updatedAt,
+        a.id AS adminId, a.username AS adminUsername, a.role AS adminRole
+      FROM restaurants r
+      LEFT JOIN admins a ON a.id = (
+        SELECT id FROM admins WHERE admins.restaurantId = r.id ORDER BY id ASC LIMIT 1
+      )
+      ORDER BY r.createdAt DESC`
     );
     return rows.map(mapRow);
   },
@@ -98,15 +155,34 @@ export const Restaurant = {
     paymentStatus?: "paid" | "pending" | "failed";
     paymentAmount?: number;
     paymentNotes?: string;
+    assignedTo?: number;
+    assignedName?: string;
+    assignedRole?: string;
+    taskNotes?: string;
+    taskStatus?: "pending" | "in_progress" | "completed";
+    monthlyFee?: number;
+    billingDueDate?: string | null;
+    subscriptionStatus?: "active" | "expired" | "suspended";
   }): Promise<RestaurantDoc> {
     const s = data.slug.trim().toLowerCase();
     const status = data.status ?? "pending";
     const paymentStatus = data.paymentStatus ?? "pending";
     const paymentAmount = data.paymentAmount ?? 0;
     const paymentNotes = data.paymentNotes ?? "";
+    const assignedTo = data.assignedTo ?? null;
+    const assignedName = data.assignedName ?? null;
+    const assignedRole = data.assignedRole ?? null;
+    const taskNotes = data.taskNotes ?? "";
+    const taskStatus = data.taskStatus ?? "pending";
+    const monthlyFee = data.monthlyFee ?? 0;
+    const billingDueDate = data.billingDueDate ?? null;
+    const subscriptionStatus = data.subscriptionStatus ?? "active";
 
     const result = await execute<ResultSetHeader>(
-      "INSERT INTO restaurants (name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      `INSERT INTO restaurants 
+       (name, slug, ownerName, phone, email, status, paymentStatus, paymentAmount, paymentNotes,
+        assignedTo, assignedName, assignedRole, taskNotes, taskStatus, monthlyFee, billingDueDate, subscriptionStatus)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         data.name.trim(),
         s,
@@ -117,6 +193,14 @@ export const Restaurant = {
         paymentStatus,
         paymentAmount,
         paymentNotes,
+        assignedTo,
+        assignedName,
+        assignedRole,
+        taskNotes,
+        taskStatus,
+        monthlyFee,
+        billingDueDate,
+        subscriptionStatus,
       ]
     );
 
@@ -131,6 +215,14 @@ export const Restaurant = {
       paymentStatus,
       paymentAmount,
       paymentNotes,
+      assignedTo: assignedTo ?? undefined,
+      assignedName: assignedName ?? undefined,
+      assignedRole: assignedRole ?? undefined,
+      taskNotes,
+      taskStatus,
+      monthlyFee,
+      billingDueDate: billingDueDate ?? undefined,
+      subscriptionStatus,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -139,10 +231,23 @@ export const Restaurant = {
   async updateStatus(
     id: number | string,
     updates: {
+      name?: string;
+      ownerName?: string;
+      phone?: string;
+      email?: string;
       status?: "active" | "pending" | "inactive" | "suspended";
       paymentStatus?: "paid" | "pending" | "failed";
       paymentAmount?: number;
       paymentNotes?: string;
+      assignedTo?: number | null;
+      assignedName?: string | null;
+      assignedRole?: string | null;
+      taskNotes?: string;
+      taskStatus?: "pending" | "in_progress" | "completed";
+      monthlyFee?: number;
+      billingDueDate?: string | null;
+      subscriptionStatus?: "active" | "expired" | "suspended";
+      lastPaymentDate?: string | null;
     }
   ): Promise<boolean> {
     const numId = Number(id);
@@ -151,6 +256,22 @@ export const Restaurant = {
     const fields: string[] = [];
     const values: any[] = [];
 
+    if (updates.name !== undefined) {
+      fields.push("name = ?");
+      values.push(updates.name.trim());
+    }
+    if (updates.ownerName !== undefined) {
+      fields.push("ownerName = ?");
+      values.push(updates.ownerName.trim());
+    }
+    if (updates.phone !== undefined) {
+      fields.push("phone = ?");
+      values.push(updates.phone.trim());
+    }
+    if (updates.email !== undefined) {
+      fields.push("email = ?");
+      values.push(updates.email.trim());
+    }
     if (updates.status !== undefined) {
       fields.push("status = ?");
       values.push(updates.status);
@@ -166,6 +287,42 @@ export const Restaurant = {
     if (updates.paymentNotes !== undefined) {
       fields.push("paymentNotes = ?");
       values.push(updates.paymentNotes);
+    }
+    if (updates.assignedTo !== undefined) {
+      fields.push("assignedTo = ?");
+      values.push(updates.assignedTo);
+    }
+    if (updates.assignedName !== undefined) {
+      fields.push("assignedName = ?");
+      values.push(updates.assignedName);
+    }
+    if (updates.assignedRole !== undefined) {
+      fields.push("assignedRole = ?");
+      values.push(updates.assignedRole);
+    }
+    if (updates.taskNotes !== undefined) {
+      fields.push("taskNotes = ?");
+      values.push(updates.taskNotes);
+    }
+    if (updates.taskStatus !== undefined) {
+      fields.push("taskStatus = ?");
+      values.push(updates.taskStatus);
+    }
+    if (updates.monthlyFee !== undefined) {
+      fields.push("monthlyFee = ?");
+      values.push(updates.monthlyFee);
+    }
+    if (updates.billingDueDate !== undefined) {
+      fields.push("billingDueDate = ?");
+      values.push(updates.billingDueDate);
+    }
+    if (updates.subscriptionStatus !== undefined) {
+      fields.push("subscriptionStatus = ?");
+      values.push(updates.subscriptionStatus);
+    }
+    if (updates.lastPaymentDate !== undefined) {
+      fields.push("lastPaymentDate = ?");
+      values.push(updates.lastPaymentDate);
     }
 
     if (fields.length === 0) return true;

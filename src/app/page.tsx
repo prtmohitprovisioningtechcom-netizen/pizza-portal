@@ -21,6 +21,11 @@ import {
   Star,
   Sparkles,
   CheckCircle2,
+  AlertCircle,
+  LayoutDashboard,
+  ChevronDown,
+  LogIn,
+  User,
 } from "lucide-react";
 import { http } from "@/services/http";
 
@@ -52,11 +57,29 @@ export default function PlatformLandingPage() {
   const adminUserId = useId();
   const adminPassId = useId();
 
+  const [partnerLoggedIn, setPartnerLoggedIn] = useState(false);
+  const [superAdminLoggedIn, setSuperAdminLoggedIn] = useState(false);
+  const [loginMenuOpen, setLoginMenuOpen] = useState(false);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("platform_theme") as "dark" | "light" | null;
       if (saved) setTheme(saved);
     }
+
+    http
+      .get<{ ok: boolean }>("/api/admin/me")
+      .then((res) => {
+        if (res.data?.ok) setPartnerLoggedIn(true);
+      })
+      .catch(() => {});
+
+    http
+      .get<{ authenticated: boolean }>("/api/super-admin/me")
+      .then((res) => {
+        if (res.data?.authenticated) setSuperAdminLoggedIn(true);
+      })
+      .catch(() => {});
   }, []);
 
   const toggleTheme = () => {
@@ -67,17 +90,38 @@ export default function PlatformLandingPage() {
 
   const isDark = theme === "dark";
 
-  // Auto-generate slug when name changes unless manually edited
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
+  const [checkingSlug, setCheckingSlug] = useState(false);
+
+  // Auto-generate slug strictly from restaurant name (user cannot edit slug directly)
   const handleNameChange = (val: string) => {
     setName(val);
-    if (!slugEdited) {
-      const generated = val
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-      setSlug(generated);
-    }
+    const generated = val
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    setSlug(generated);
   };
+
+  useEffect(() => {
+    if (!slug || slug.length < 2) {
+      setSlugAvailable(null);
+      return;
+    }
+    setCheckingSlug(true);
+    const t = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/partner/check-slug?slug=${encodeURIComponent(slug)}`);
+        const data = await res.json();
+        setSlugAvailable(data.available);
+      } catch {
+        setSlugAvailable(null);
+      } finally {
+        setCheckingSlug(false);
+      }
+    }, 250);
+    return () => clearTimeout(t);
+  }, [slug]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,11 +185,11 @@ export default function PlatformLandingPage() {
               <span className={`font-extrabold text-xl tracking-tight block leading-tight ${isDark ? "text-white" : "text-neutral-900"}`}>
                 Pizza<span className="text-[#e60000]">Hub</span>{" "}
                 <span className="text-[10px] bg-red-950/80 border border-red-800/80 text-red-300 font-semibold px-2 py-0.5 rounded-full ml-1 uppercase tracking-wider">
-                  Partner OS
+                  Partner Hub
                 </span>
               </span>
               <span className={`text-[10px] font-medium ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
-                Multi-Tenant Restaurant Platform
+                Restaurant Partner & Merchant Network
               </span>
             </div>
           </Link>
@@ -168,10 +212,6 @@ export default function PlatformLandingPage() {
             <Link href="/faq" className="hover:text-red-500 transition">
               FAQs
             </Link>
-            <Link href="/super-admin/login" className="text-purple-400 hover:text-purple-300 font-bold flex items-center gap-1">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              <span>Super Admin</span>
-            </Link>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -189,17 +229,79 @@ export default function PlatformLandingPage() {
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
 
-            <Link
-              href="/admin/login"
-              className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition ${
-                isDark
-                  ? "border-neutral-800 bg-neutral-900/80 text-neutral-200 hover:bg-neutral-800"
-                  : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 shadow-sm"
-              }`}
-            >
-              <Lock className="h-3.5 w-3.5 text-neutral-400" />
-              <span>Partner Login</span>
-            </Link>
+            {partnerLoggedIn ? (
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#e60000] px-4 py-2 text-xs font-bold text-white shadow-md shadow-red-500/25 hover:bg-[#cc0000] transition"
+              >
+                <LayoutDashboard className="h-3.5 w-3.5" />
+                <span>Partner Dashboard</span>
+              </Link>
+            ) : superAdminLoggedIn ? (
+              <Link
+                href="/super-admin"
+                className="inline-flex items-center gap-1.5 rounded-full bg-purple-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-purple-600/30 hover:bg-purple-500 transition"
+              >
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>Console</span>
+              </Link>
+            ) : (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setLoginMenuOpen(!loginMenuOpen)}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition cursor-pointer ${
+                    isDark
+                      ? "border-neutral-800 bg-neutral-900/80 text-neutral-200 hover:bg-neutral-800"
+                      : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 shadow-sm"
+                  }`}
+                >
+                  <LogIn className="h-3.5 w-3.5 text-red-500" />
+                  <span>Login</span>
+                  <ChevronDown className={`h-3 w-3 transition-transform ${loginMenuOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {loginMenuOpen && (
+                  <div
+                    className={`absolute right-0 mt-2 w-56 rounded-2xl border p-2 shadow-2xl z-50 animate-in fade-in ${
+                      isDark ? "bg-[#0f1118] border-neutral-800 text-white" : "bg-white border-neutral-200 text-neutral-900"
+                    }`}
+                  >
+                    <Link
+                      href="/admin/login"
+                      onClick={() => setLoginMenuOpen(false)}
+                      className={`flex items-start gap-2.5 p-2.5 rounded-xl transition ${
+                        isDark ? "hover:bg-neutral-800/80" : "hover:bg-neutral-50"
+                      }`}
+                    >
+                      <div className="h-8 w-8 rounded-lg bg-red-500/15 text-[#e60000] flex items-center justify-center shrink-0 mt-0.5">
+                        <Store className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-xs">Partner Store Login</p>
+                        <p className="text-[10px] text-neutral-400">Manage orders, menu & store</p>
+                      </div>
+                    </Link>
+
+                    <Link
+                      href="/super-admin/login"
+                      onClick={() => setLoginMenuOpen(false)}
+                      className={`flex items-start gap-2.5 p-2.5 rounded-xl transition mt-1 border-t ${
+                        isDark ? "border-neutral-800/80 hover:bg-neutral-800/80" : "border-neutral-100 hover:bg-neutral-50"
+                      }`}
+                    >
+                      <div className="h-8 w-8 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center shrink-0 mt-0.5">
+                        <ShieldCheck className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-xs">Staff & Super Admin</p>
+                        <p className="text-[10px] text-neutral-400">Platform operations & management</p>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
 
             <button
               type="button"
@@ -675,10 +777,10 @@ export default function PlatformLandingPage() {
               </div>
               <div className="mt-6 pt-4 border-t border-neutral-500/10 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-orange-600/20 text-orange-500 font-bold flex items-center justify-center">
-                  MS
+                  AS
                 </div>
                 <div>
-                  <p className={`text-xs font-bold ${isDark ? "text-white" : "text-neutral-900"}`}>Mohit Sharma</p>
+                  <p className={`text-xs font-bold ${isDark ? "text-white" : "text-neutral-900"}`}>Aman Sharma</p>
                   <p className="text-[11px] text-neutral-400">Owner, Crust & Slice Cafe</p>
                 </div>
               </div>
@@ -721,8 +823,8 @@ export default function PlatformLandingPage() {
               <Pizza className="h-4 w-4" />
             </div>
             <div>
-              <p className={`font-extrabold text-sm ${isDark ? "text-white" : "text-neutral-900"}`}>PizzaHub Partner Platform</p>
-              <p className="text-[11px] text-neutral-400">Multi-Tenant Restaurant SaaS Infrastructure</p>
+              <p className={`font-extrabold text-sm ${isDark ? "text-white" : "text-neutral-900"}`}>PizzaHub Partner Hub</p>
+              <p className="text-[11px] text-neutral-400">Restaurant Partner & Merchant Platform</p>
             </div>
           </div>
 
@@ -777,10 +879,10 @@ export default function PlatformLandingPage() {
                 }`}>
                   <p className="font-bold text-amber-500 flex items-center gap-1.5">
                     <ShieldCheck className="h-4 w-4" />
-                    <span>Pending Super Admin Verification & Payment</span>
+                    <span>Pending Super Admin Verification</span>
                   </p>
                   <p className="leading-relaxed text-[11px] opacity-80">
-                    Thank you for registering! Our platform super administrator will review your application and contact you at <strong className="font-mono">{registeredStoreData.phone || "your number"}</strong> to confirm payment and activate your store.
+                    Thank you for registering! Our platform super administrator will review your application and contact you at <strong className="font-mono">{registeredStoreData.phone || "your number"}</strong> to verify your store details and activate your account.
                   </p>
                 </div>
 
@@ -833,30 +935,66 @@ export default function PlatformLandingPage() {
                   </div>
 
                   <div>
-                    <label htmlFor={restSlugId} className="block text-xs font-semibold mb-1">
-                      Your Unique Store URL *
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label htmlFor={restSlugId} className="block text-xs font-semibold">
+                        Your Unique Store URL *
+                      </label>
+                      <span className="text-[10px] text-amber-500 font-bold flex items-center gap-1">
+                        <Lock className="h-3 w-3" />
+                        Auto-Generated • Locked (Cannot Change)
+                      </span>
+                    </div>
+
                     <div className={`flex items-center rounded-xl border overflow-hidden ${
-                      isDark ? "border-neutral-800 bg-neutral-900" : "border-neutral-300 bg-white"
+                      isDark ? "border-neutral-800 bg-neutral-950/80" : "border-neutral-300 bg-neutral-100/90"
                     }`}>
                       <span className={`px-3 text-xs font-mono select-none py-2.5 border-r ${
-                        isDark ? "text-neutral-400 bg-neutral-800/80 border-neutral-700/80" : "text-neutral-500 bg-neutral-100 border-neutral-200"
+                        isDark ? "text-neutral-500 bg-neutral-900 border-neutral-800" : "text-neutral-500 bg-neutral-200/70 border-neutral-300"
                       }`}>
                         /
                       </span>
                       <input
                         id={restSlugId}
                         required
+                        readOnly
+                        tabIndex={-1}
                         type="text"
-                        placeholder="royal-pizza"
+                        placeholder="auto-generated-from-name"
                         value={slug}
-                        onChange={(e) => {
-                          setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
-                          setSlugEdited(true);
-                        }}
-                        className="w-full bg-transparent px-3 py-2.5 text-sm outline-none font-mono"
+                        className="w-full bg-transparent px-3 py-2.5 text-sm outline-none font-mono cursor-not-allowed select-all text-neutral-500 font-bold"
                       />
+                      <div className="px-3 shrink-0 flex items-center gap-1.5">
+                        {checkingSlug && <Loader2 className="h-3.5 w-3.5 animate-spin text-neutral-400" />}
+                        {!checkingSlug && slugAvailable === true && (
+                          <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            Available
+                          </span>
+                        )}
+                        {!checkingSlug && slugAvailable === false && (
+                          <span className="text-[10px] font-bold text-red-500 flex items-center gap-1">
+                            <AlertCircle className="h-3.5 w-3.5" />
+                            Already Taken
+                          </span>
+                        )}
+                        <Lock className="h-3.5 w-3.5 text-neutral-400 ml-0.5" />
+                      </div>
                     </div>
+
+                    {slugAvailable === false && (
+                      <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1 font-semibold">
+                        <AlertCircle className="h-3.5 w-3.5" />
+                        <span>Store URL '/{slug}' is already taken! Please enter a unique restaurant name.</span>
+                      </p>
+                    )}
+                    {slugAvailable === true && (
+                      <p className="mt-1 text-[11px] text-emerald-500 font-medium">
+                        ✓ Storefront URL <strong>/{slug}</strong> is ready for your restaurant!
+                      </p>
+                    )}
+                    <p className="mt-1 text-[11px] text-neutral-500">
+                      ℹ️ Store URL is permanently locked to your Restaurant Name to ensure QR codes and customer links never break.
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2.5">
@@ -867,7 +1005,7 @@ export default function PlatformLandingPage() {
                       <input
                         id={ownerNameId}
                         type="text"
-                        placeholder="Mohit Kumar"
+                        placeholder="Owner Name"
                         value={ownerName}
                         onChange={(e) => setOwnerName(e.target.value)}
                         className={`w-full rounded-xl border px-3 py-2 text-sm outline-none ${
@@ -883,7 +1021,7 @@ export default function PlatformLandingPage() {
                         id={phoneId}
                         required
                         type="tel"
-                        placeholder="9876543210"
+                        placeholder="Phone number"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         className={`w-full rounded-xl border px-3 py-2 text-sm outline-none ${
@@ -949,13 +1087,18 @@ export default function PlatformLandingPage() {
 
                   <button
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || slugAvailable === false || !slug}
                     className="w-full rounded-xl bg-linear-to-r from-[#e60000] to-orange-600 py-3 text-sm font-bold text-white shadow-lg shadow-red-600/30 hover:opacity-95 disabled:opacity-50 transition flex items-center justify-center gap-2 mt-2 cursor-pointer"
                   >
                     {submitting ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
                         Submitting Application…
+                      </>
+                    ) : slugAvailable === false ? (
+                      <>
+                        <AlertCircle className="h-4 w-4" />
+                        <span>Store Name / URL Already Taken</span>
                       </>
                     ) : (
                       <>

@@ -47,16 +47,42 @@ export async function PATCH(request: Request) {
     }
 
     const updates: {
+      name?: string;
+      ownerName?: string;
+      phone?: string;
+      email?: string;
       status?: "active" | "pending" | "inactive" | "suspended";
       paymentStatus?: "paid" | "pending" | "failed";
       paymentAmount?: number;
       paymentNotes?: string;
+      assignedTo?: number | null;
+      assignedName?: string | null;
+      assignedRole?: string | null;
+      taskNotes?: string;
+      taskStatus?: "pending" | "in_progress" | "completed";
+      monthlyFee?: number;
+      billingDueDate?: string | null;
+      subscriptionStatus?: "active" | "expired" | "suspended";
+      lastPaymentDate?: string | null;
     } = {};
 
+    if (body.name !== undefined) updates.name = String(body.name);
+    if (body.ownerName !== undefined) updates.ownerName = String(body.ownerName);
+    if (body.phone !== undefined) updates.phone = String(body.phone);
+    if (body.email !== undefined) updates.email = String(body.email);
     if (body.status !== undefined) updates.status = body.status;
     if (body.paymentStatus !== undefined) updates.paymentStatus = body.paymentStatus;
     if (body.paymentAmount !== undefined) updates.paymentAmount = Number(body.paymentAmount);
     if (body.paymentNotes !== undefined) updates.paymentNotes = String(body.paymentNotes);
+    if (body.assignedTo !== undefined) updates.assignedTo = body.assignedTo === null ? null : Number(body.assignedTo);
+    if (body.assignedName !== undefined) updates.assignedName = body.assignedName;
+    if (body.assignedRole !== undefined) updates.assignedRole = body.assignedRole;
+    if (body.taskNotes !== undefined) updates.taskNotes = String(body.taskNotes);
+    if (body.taskStatus !== undefined) updates.taskStatus = body.taskStatus;
+    if (body.monthlyFee !== undefined) updates.monthlyFee = Number(body.monthlyFee);
+    if (body.billingDueDate !== undefined) updates.billingDueDate = body.billingDueDate ? String(body.billingDueDate).slice(0, 10) : null;
+    if (body.subscriptionStatus !== undefined) updates.subscriptionStatus = body.subscriptionStatus;
+    if (body.lastPaymentDate !== undefined) updates.lastPaymentDate = body.lastPaymentDate ? String(body.lastPaymentDate).slice(0, 10) : null;
 
     const success = await Restaurant.updateStatus(id, updates);
     if (!success) {

@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Upload } from "lucide-react";
+import Link from "next/link";
+import { Upload, ArrowLeft } from "lucide-react";
 import {
   fetchNavbar,
   updateNavbar,
@@ -70,6 +71,15 @@ export default function AdminNavbarPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6 sm:space-y-8">
       <div>
+        <div className="flex items-center gap-3 mb-3">
+          <Link
+            href="/admin"
+            className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Back to Dashboard</span>
+          </Link>
+        </div>
         <h1 className="text-xl font-bold sm:text-2xl">Navbar</h1>
         <p className="mt-1 text-xs text-neutral-600 sm:mt-2 sm:text-sm">
           Top bar on the public menu: logo, title, tagline, and Call number. Leave any

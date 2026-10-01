@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Plus, Trash2, Upload, Search, X } from "lucide-react";
+import Link from "next/link";
+import { Plus, Trash2, Upload, Search, X, ArrowLeft } from "lucide-react";
 import {
   createProduct,
   deleteProduct,
@@ -201,11 +202,20 @@ export default function AdminProductsPage() {
   });
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <div>
+        <div className="flex items-center gap-3 mb-3">
+          <Link
+            href="/admin"
+            className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Back to Dashboard</span>
+          </Link>
+        </div>
         <h1 className="text-2xl font-bold">Products</h1>
         <p className="text-sm text-neutral-600">
-          Add different sizes/types for each product. Upload images here — they're saved in
+          Add different sizes/types for each product. Upload images here — they're saved in{" "}
           <code className="rounded bg-neutral-100 px-1">public/uploads</code> on the server.
         </p>
       </div>

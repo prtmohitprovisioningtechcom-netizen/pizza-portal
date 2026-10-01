@@ -35,7 +35,8 @@ export async function POST(request: Request) {
     return await jsonWithSuperAdminSession(
       superAdmin.id,
       superAdmin.username,
-      superAdmin.name
+      superAdmin.name,
+      superAdmin.role || "superadmin"
     );
   } catch (e) {
     console.error("Super Admin login error:", e);

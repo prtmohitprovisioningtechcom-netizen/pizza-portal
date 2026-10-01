@@ -8,6 +8,7 @@ export interface SuperAdminDoc {
   name: string;
   email?: string;
   phone?: string;
+  role?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -20,6 +21,7 @@ function mapRow(r: RowDataPacket): SuperAdminDoc {
     name: r.name ?? "Super Administrator",
     email: r.email ?? "",
     phone: r.phone ?? "",
+    role: r.role ?? "superadmin",
     createdAt: r.createdAt ? new Date(r.createdAt) : undefined,
     updatedAt: r.updatedAt ? new Date(r.updatedAt) : undefined,
   };
@@ -29,7 +31,7 @@ export const SuperAdmin = {
   async findByUsername(username: string): Promise<SuperAdminDoc | null> {
     const u = username.trim();
     const rows = await query<RowDataPacket[]>(
-      "SELECT id, username, passwordHash, name, email, phone, createdAt, updatedAt FROM super_admins WHERE username = ? LIMIT 1",
+      "SELECT id, username, passwordHash, name, email, phone, role, createdAt, updatedAt FROM super_admins WHERE username = ? LIMIT 1",
       [u]
     );
     if (!rows || rows.length === 0) return null;
@@ -40,11 +42,18 @@ export const SuperAdmin = {
     const numId = Number(id);
     if (!numId || isNaN(numId)) return null;
     const rows = await query<RowDataPacket[]>(
-      "SELECT id, username, passwordHash, name, email, phone, createdAt, updatedAt FROM super_admins WHERE id = ? LIMIT 1",
+      "SELECT id, username, passwordHash, name, email, phone, role, createdAt, updatedAt FROM super_admins WHERE id = ? LIMIT 1",
       [numId]
     );
     if (!rows || rows.length === 0) return null;
     return mapRow(rows[0]);
+  },
+
+  async findAll(): Promise<SuperAdminDoc[]> {
+    const rows = await query<RowDataPacket[]>(
+      "SELECT id, username, passwordHash, name, email, phone, role, createdAt, updatedAt FROM super_admins ORDER BY id ASC"
+    );
+    return rows.map(mapRow);
   },
 
   async create(data: {
@@ -53,15 +62,18 @@ export const SuperAdmin = {
     name: string;
     email?: string;
     phone?: string;
+    role?: string;
   }): Promise<SuperAdminDoc> {
+    const role = data.role?.trim() || "superadmin";
     const result = await execute<ResultSetHeader>(
-      "INSERT INTO super_admins (username, passwordHash, name, email, phone) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO super_admins (username, passwordHash, name, email, phone, role) VALUES (?, ?, ?, ?, ?, ?)",
       [
         data.username.trim(),
         data.passwordHash,
         data.name.trim(),
         data.email?.trim() ?? "",
         data.phone?.trim() ?? "",
+        role,
       ]
     );
     return {
@@ -71,8 +83,56 @@ export const SuperAdmin = {
       name: data.name.trim(),
       email: data.email?.trim() ?? "",
       phone: data.phone?.trim() ?? "",
+      role,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+  },
+
+  async updatePassword(id: number | string, passwordHash: string): Promise<boolean> {
+    const numId = Number(id);
+    if (!numId || isNaN(numId)) return false;
+    await execute("UPDATE super_admins SET passwordHash = ?, updatedAt = NOW() WHERE id = ?", [
+      passwordHash,
+      numId,
+    ]);
+    return true;
+  },
+
+  async updateProfile(
+    id: number | string,
+    data: { name?: string; email?: string; phone?: string; role?: string }
+  ): Promise<boolean> {
+    const numId = Number(id);
+    if (!numId || isNaN(numId)) return false;
+
+    const fields: string[] = [];
+    const values: any[] = [];
+
+    if (data.name !== undefined) {
+      fields.push("name = ?");
+      values.push(data.name.trim());
+    }
+    if (data.email !== undefined) {
+      fields.push("email = ?");
+      values.push(data.email.trim());
+    }
+    if (data.phone !== undefined) {
+      fields.push("phone = ?");
+      values.push(data.phone.trim());
+    }
+    if (data.role !== undefined) {
+      fields.push("role = ?");
+      values.push(data.role.trim());
+    }
+
+    if (fields.length === 0) return true;
+
+    values.push(numId);
+    await execute(
+      `UPDATE super_admins SET ${fields.join(", ")}, updatedAt = NOW() WHERE id = ?`,
+      values
+    );
+    return true;
   },
 };

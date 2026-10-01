@@ -70,7 +70,7 @@ export default async function DirectRestaurantStorePage({ params }: Params) {
           <p className="text-xs font-mono text-orange-400 mt-1">/{restaurant.slug}</p>
 
           <p className="text-xs text-neutral-400 mt-4 leading-relaxed">
-            This restaurant storefront has been registered and is currently awaiting Super Admin verification and payment confirmation. Online ordering will be live immediately upon approval.
+            This restaurant storefront has been registered and is currently awaiting Super Admin verification. Online ordering will be live immediately upon approval.
           </p>
 
           <div className="mt-6 pt-5 border-t border-neutral-800/80 flex flex-col gap-2.5">
@@ -95,8 +95,16 @@ export default async function DirectRestaurantStorePage({ params }: Params) {
     );
   }
 
-  // If store is suspended/inactive
-  if (restaurant.status !== "active") {
+  // Check if store subscription is expired or unpaid
+  const isExpired = Boolean(
+    restaurant.paymentStatus !== "paid" ||
+    restaurant.subscriptionStatus === "expired" ||
+    restaurant.subscriptionStatus === "suspended" ||
+    (restaurant.billingDueDate && new Date(`${restaurant.billingDueDate}T23:59:59`) < new Date())
+  );
+
+  // If store is suspended/inactive or expired
+  if (restaurant.status !== "active" || isExpired) {
     return (
       <div className="min-h-screen bg-[#0a0c10] text-white flex items-center justify-center p-4">
         <div className="max-w-md w-full rounded-3xl border border-neutral-800 bg-[#11131a] p-8 text-center shadow-2xl relative overflow-hidden">
@@ -106,7 +114,7 @@ export default async function DirectRestaurantStorePage({ params }: Params) {
 
           <h1 className="text-2xl font-black text-white">{restaurant.name}</h1>
           <p className="text-xs text-neutral-400 mt-3 leading-relaxed">
-            This restaurant storefront is currently inactive or suspended. Please contact platform administration.
+            This restaurant storefront is currently inactive or service is suspended. Please contact store administration.
           </p>
 
           <div className="mt-6 pt-5 border-t border-neutral-800 flex justify-center">

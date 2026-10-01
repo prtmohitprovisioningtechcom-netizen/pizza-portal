@@ -10,18 +10,24 @@ export interface SuperAdminTokenPayload {
   username: string;
   name: string;
   role: "super_admin";
+  staffRole: "superadmin" | "operator" | "support";
 }
 
 export async function createSuperAdminToken(
   adminId: number | string,
   username: string,
-  name: string
+  name: string,
+  staffRole: string = "superadmin"
 ): Promise<string> {
+  const normalizedRole =
+    staffRole === "operator" || staffRole === "support" ? staffRole : "superadmin";
+
   return await new SignJWT({
     sub: String(adminId),
     username,
     name,
     role: "super_admin",
+    staffRole: normalizedRole,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
@@ -31,12 +37,16 @@ export async function createSuperAdminToken(
 export async function jsonWithSuperAdminSession(
   adminId: number | string,
   username: string,
-  name: string
+  name: string,
+  staffRole: string = "superadmin"
 ): Promise<NextResponse> {
-  const token = await createSuperAdminToken(adminId, username, name);
+  const normalizedRole =
+    staffRole === "operator" || staffRole === "support" ? staffRole : "superadmin";
+
+  const token = await createSuperAdminToken(adminId, username, name, normalizedRole);
   const res = NextResponse.json({
     ok: true,
-    user: { id: adminId, username, name, role: "super_admin" },
+    user: { id: adminId, username, name, role: "super_admin", staffRole: normalizedRole },
   });
 
   res.cookies.set(SUPER_ADMIN_COOKIE, token, {
@@ -64,11 +74,16 @@ export async function verifySuperAdminSession(
     const { payload } = await jwtVerify(token, getJwtSecret());
     if (payload.role !== "super_admin") return null;
 
+    const staffRole = (payload.staffRole as string) || "superadmin";
+    const normalizedRole =
+      staffRole === "operator" || staffRole === "support" ? staffRole : "superadmin";
+
     return {
       sub: String(payload.sub),
       username: String(payload.username || ""),
       name: String(payload.name || "Super Admin"),
       role: "super_admin",
+      staffRole: normalizedRole,
     };
   } catch {
     return null;

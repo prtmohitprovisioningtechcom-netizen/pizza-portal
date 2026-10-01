@@ -12,6 +12,8 @@ import {
   PanelTop,
   ExternalLink,
   Store,
+  KeyRound,
+  ArrowLeft,
 } from "lucide-react";
 import { AdminLogoutButton } from "@/components/layout/AdminLogoutButton";
 
@@ -22,6 +24,7 @@ const nav = [
   { href: "/admin/categories", label: "Categories", icon: FolderTree },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/orders", label: "Orders", icon: Receipt },
+  { href: "/admin/security", label: "Change Password", icon: KeyRound },
 ];
 
 interface AdminInfo {
@@ -136,7 +139,48 @@ export default function AdminDashboardLayout({
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Universal Admin Top Bar with Back Button */}
+          <div className="border-b border-neutral-200 bg-white/80 backdrop-blur-md px-4 sm:px-6 py-3 flex items-center justify-between gap-4 sticky top-0 z-20">
+            <div className="flex items-center gap-2.5">
+              {pathname === "/admin" || pathname === "/admin/(dashboard)" ? (
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-xs font-bold text-neutral-700 shadow-xs hover:bg-neutral-50 hover:text-neutral-900 transition"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>← Platform Home</span>
+                </Link>
+              ) : (
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-xs font-bold text-neutral-700 shadow-xs hover:bg-neutral-50 hover:text-neutral-900 transition"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>← Back to Dashboard</span>
+                </Link>
+              )}
+
+              <span className="hidden sm:inline-block text-xs text-neutral-400 font-medium">
+                • Store: <strong className="text-neutral-700">{adminInfo?.restaurantName || "Partner"}</strong>
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <a
+                href={storeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#e60000] hover:underline"
+              >
+                <span>View Storefront</span>
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+          </div>
+
+          <div className="p-4 sm:p-6 lg:p-8 flex-1">{children}</div>
+        </div>
       </div>
     </div>
   );

@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Restaurant profile not found" }, { status: 404 });
     }
 
-    // Gate: Check verification status
+    // Gate 1: Check verification status
     if (r.status === "pending") {
       return NextResponse.json(
         {
@@ -65,6 +65,33 @@ export async function POST(request: Request) {
         {
           error:
             "Your restaurant account is currently suspended or inactive. Please contact Super Admin.",
+        },
+        { status: 403 }
+      );
+    }
+
+    // Gate 2: Check Monthly Billing & Subscription Validity
+    const now = new Date();
+    const isDueDateExpired = Boolean(
+      r.billingDueDate && new Date(`${r.billingDueDate}T23:59:59`) < now
+    );
+    const isUnpaid = r.paymentStatus !== "paid";
+    const isSubscriptionBlocked =
+      r.subscriptionStatus === "expired" || r.subscriptionStatus === "suspended";
+
+    if (isDueDateExpired || isUnpaid || isSubscriptionBlocked) {
+      const formattedDate = r.billingDueDate
+        ? new Date(r.billingDueDate).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+        : "Not Set";
+
+      return NextResponse.json(
+        {
+          error: `Your account validity has expired or service is suspended. Please contact Super Admin to activate your account.`,
+          expired: true,
         },
         { status: 403 }
       );

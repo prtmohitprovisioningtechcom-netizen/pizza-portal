@@ -6,5 +6,13 @@ export async function GET() {
   if (!session) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
-  return NextResponse.json({ authenticated: true, user: session });
+  return NextResponse.json({
+    authenticated: true,
+    user: {
+      id: Number(session.sub),
+      username: session.username,
+      name: session.name,
+      role: session.staffRole || "superadmin",
+    },
+  });
 }
