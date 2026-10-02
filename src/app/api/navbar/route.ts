@@ -24,9 +24,9 @@ function fromDoc(doc: {
   phone?: string | null;
 } | null): NavbarPublicDTO {
   return {
-    logoUrl: (doc?.logoUrl ?? "").trim(),
-    brand: (doc?.brand ?? "").trim(),
-    tagline: (doc?.tagline ?? "").trim(),
+    logoUrl: (doc?.logoUrl ?? "").trim() || "/kya-khaugey.png",
+    brand: (doc?.brand ?? "").trim() || "Khaoge Kya?",
+    tagline: (doc?.tagline ?? "").trim() || "Good Food For Good Moments",
     phone: (doc?.phone ?? "").trim(),
   };
 }
@@ -43,10 +43,10 @@ export async function GET(request: Request) {
         { key: KEY, restaurantId: rId },
         {
           $set: {
-            brand: restaurant.name,
+            brand: restaurant.name || "Khaoge Kya?",
             phone: restaurant.phone,
-            tagline: "Fresh, Hot & Delicious",
-            logoUrl: "",
+            tagline: "Good Food For Good Moments",
+            logoUrl: "/kya-khaugey.png",
           },
         }
       );
@@ -62,9 +62,9 @@ export async function GET(request: Request) {
     console.error(e);
     return NextResponse.json(
       {
-        logoUrl: "",
-        brand: "",
-        tagline: "",
+        logoUrl: "/kya-khaugey.png",
+        brand: "Khaoge Kya?",
+        tagline: "Good Food For Good Moments",
         phone: "",
         error: "navbar_unavailable",
       },

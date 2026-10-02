@@ -123,14 +123,24 @@ export default function AdminNavbarPage() {
               <div className="min-w-0 flex-1 space-y-3">
                 <label className="block text-xs font-semibold uppercase text-neutral-500">
                   Logo URL
-                  <input
-                    className="mt-1 w-full rounded-xl border px-3 py-2 text-sm"
-                    value={s.logoUrl}
-                    onChange={(e) =>
-                      setS((p) => ({ ...p, logoUrl: e.target.value }))
-                    }
-                    placeholder="https://… or /uploads/…"
-                  />
+                  <div className="flex gap-2 mt-1">
+                    <input
+                      className="w-full rounded-xl border px-3 py-2 text-sm"
+                      value={s.logoUrl}
+                      onChange={(e) =>
+                        setS((p) => ({ ...p, logoUrl: e.target.value }))
+                      }
+                      placeholder="/kya-khaugey.png"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setS((p) => ({ ...p, logoUrl: "/kya-khaugey.png" }))}
+                      className="shrink-0 rounded-xl border border-[#ffde00] bg-[#0b2545] px-3 py-2 text-xs font-bold text-white hover:bg-[#07192f] transition"
+                      title="Set Khaoge Kya official logo"
+                    >
+                      Use Logo
+                    </button>
+                  </div>
                 </label>
                 <label className="block text-xs font-semibold uppercase text-neutral-500">
                   Brand (main title)
@@ -140,18 +150,18 @@ export default function AdminNavbarPage() {
                     onChange={(e) =>
                       setS((p) => ({ ...p, brand: e.target.value }))
                     }
-                    placeholder="Restaurant name"
+                    placeholder="Khaoge Kya?"
                   />
                 </label>
                 <label className="block text-xs font-semibold uppercase text-neutral-500">
-                  Tagline (green line under title)
+                  Tagline (subtitle under brand)
                   <input
                     className="mt-1 w-full rounded-xl border px-3 py-2 text-sm"
                     value={s.tagline}
                     onChange={(e) =>
                       setS((p) => ({ ...p, tagline: e.target.value }))
                     }
-                    placeholder="Short line (optional)"
+                    placeholder="Good Food For Good Moments"
                   />
                 </label>
                 <label className="block text-xs font-semibold uppercase text-neutral-500">
@@ -167,19 +177,29 @@ export default function AdminNavbarPage() {
                 </label>
               </div>
             </div>
-            {s.logoUrl.trim() ? (
-              <div className="relative mt-4 h-16 w-16 overflow-hidden rounded-full border bg-neutral-50">
+            <div className="flex items-center gap-3 mt-4 pt-3 border-t">
+              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full ring-2 ring-[#ffde00] bg-white shadow-sm">
                 <Image
-                  src={s.logoUrl.trim()}
-                  alt=""
+                  src={s.logoUrl.trim() || "/kya-khaugey.png"}
+                  alt="Logo Preview"
                   fill
                   className="object-cover"
-                  unoptimized={
-                    s.logoUrl.startsWith("http") || s.logoUrl.startsWith("//")
-                  }
+                  unoptimized={Boolean(
+                    s.logoUrl.startsWith("http") ||
+                      s.logoUrl.startsWith("//") ||
+                      s.logoUrl.startsWith("/kya")
+                  )}
                 />
               </div>
-            ) : null}
+              <div>
+                <p className="text-xs font-bold text-neutral-800">
+                  Current Logo Preview
+                </p>
+                <p className="text-[11px] text-neutral-500">
+                  {s.logoUrl.trim() || "/kya-khaugey.png (Default Khaoge Kya logo)"}
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-3">

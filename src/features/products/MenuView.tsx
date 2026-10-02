@@ -360,13 +360,13 @@ export function MenuView({
         <>
           <HeroBanner images={heroImages} />
 
-        <div className="mb-2 md:hidden">
+        <div className="mb-2.5 md:hidden">
           <label htmlFor="dish-search" className="sr-only">
             Search for dishes
           </label>
           <div className="relative">
             <Search
-              className="pointer-events-none absolute left-3.5 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-[#b91c1c]/50"
+              className="pointer-events-none absolute left-3.5 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-[#e51b24]"
               aria-hidden
             />
             <input
@@ -376,7 +376,7 @@ export function MenuView({
               placeholder="Search for dishes…"
               value={dishSearch}
               onChange={(e) => setDishSearch(e.target.value)}
-              className="font-body w-full rounded-xl border border-white/90 bg-white py-2.5 pl-10 pr-4 text-sm text-neutral-800 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.12)] outline-none ring-[#e60000]/20 placeholder:text-neutral-400 focus:border-[#e60000]/35 focus:ring-2"
+              className="font-body w-full rounded-2xl border-2 border-[#ffde00]/70 bg-white py-2.5 pl-10 pr-4 text-sm text-[#0b2545] shadow-[0_4px_20px_-6px_rgba(11,37,69,0.1)] outline-none placeholder:text-neutral-400 focus:border-[#e51b24] focus:ring-2 focus:ring-[#e51b24]/20"
             />
           </div>
         </div>
@@ -384,11 +384,11 @@ export function MenuView({
         <div
           ref={categoryStripRef}
           onScroll={jumpCategoryLoop}
-          className="mb-2.5 -mx-1 min-w-0 w-full touch-pan-x overflow-x-auto overscroll-x-contain pb-0.5 sm:mb-3 md:mb-4 scrollbar-hide"
+          className="mb-3 -mx-1 min-w-0 w-full touch-pan-x overflow-x-auto overscroll-x-contain pb-1 sm:mb-4 scrollbar-hide"
         >
           <div
             ref={categoryInnerRef}
-            className="flex w-max min-w-min gap-1 px-1 sm:gap-2 sm:px-1.5 md:gap-2.5"
+            className="flex w-max min-w-min gap-1.5 px-1 sm:gap-2.5 sm:px-1.5 md:gap-3"
           >
             {categoryStripModel.items.map((item, idx) => (
               <button
@@ -399,9 +399,9 @@ export function MenuView({
                 }
                 type="button"
                 onClick={() => scrollToSection(item.id)}
-                className="flex min-w-36 max-w-48 shrink-0 items-center gap-1 rounded-lg border border-white/80 bg-white px-2 py-1.5 text-left shadow-[0_5px_20px_-10px_rgba(0,0,0,0.12)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_26px_-10px_rgba(230,0,0,0.16)] sm:min-w-44 sm:max-w-52 sm:gap-1.5 sm:rounded-xl sm:px-2.5 sm:py-2 md:gap-2 md:min-w-48"
+                className="group flex min-w-36 max-w-48 shrink-0 items-center gap-1.5 rounded-xl border border-[#ffde00]/60 bg-white px-2.5 py-1.5 text-left shadow-[0_3px_12px_-4px_rgba(11,37,69,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_22px_-6px_rgba(229,27,36,0.22)] hover:border-[#e51b24]/50 sm:min-w-44 sm:max-w-52 sm:gap-2 sm:rounded-2xl sm:px-3 sm:py-2 md:gap-2.5 md:min-w-48"
               >
-                <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-[#fdf6e8] ring-2 ring-[#e60000]/15 sm:h-9 sm:w-9 md:h-10 md:w-10">
+                <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-[#fff8e7] ring-2 ring-[#ffde00] shadow-xs sm:h-10 sm:w-10">
                   {item.image ? (
                     <Image
                       src={item.image.startsWith("http") ? item.image : item.image}
@@ -420,7 +420,7 @@ export function MenuView({
                     />
                   )}
                 </span>
-                <span className="font-body text-[11px] font-extrabold uppercase leading-tight text-[#b91c1c] sm:text-xs">
+                <span className="font-navbar-brand text-[11px] font-black uppercase leading-tight text-[#0b2545] group-hover:text-[#e51b24] transition-colors sm:text-xs">
                   {item.name}
                 </span>
               </button>

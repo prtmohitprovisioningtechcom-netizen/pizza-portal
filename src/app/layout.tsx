@@ -27,8 +27,13 @@ const notoDevanagari = Noto_Sans_Devanagari({
 });
 
 export const metadata: Metadata = {
-  title: "Ad Pizza Hub Saifai",
-  description: "आपका अपना रेस्टोरेंट सैफई — pizzas, burgers & more.",
+  title: "Khaoge Kya? — Good Food For Good Moments",
+  description: "Khaoge Kya? — Delicious Pizzas, Burgers & Good Food For Good Moments.",
+  icons: {
+    icon: "/kya-khaugey.png",
+    shortcut: "/kya-khaugey.png",
+    apple: "/kya-khaugey.png",
+  },
 };
 
 export default function RootLayout({

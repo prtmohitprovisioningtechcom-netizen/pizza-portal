@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useId } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Store,
   Pizza,
@@ -178,18 +179,22 @@ export default function PlatformLandingPage() {
       }`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-linear-to-tr from-[#e60000] to-orange-500 text-white shadow-lg shadow-red-500/25 group-hover:scale-105 transition">
-              <Pizza className="h-5 w-5" />
+            <div className="relative h-13 w-13 sm:h-15 sm:w-15 shrink-0 overflow-hidden rounded-full ring-2.5 ring-[#ffde00] bg-white shadow-md group-hover:scale-105 transition">
+              <Image
+                src="/kya-khaugey.png"
+                alt="Khaoge Kya?"
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 52px, 60px"
+                priority
+              />
             </div>
             <div>
-              <span className={`font-extrabold text-xl tracking-tight block leading-tight ${isDark ? "text-white" : "text-neutral-900"}`}>
-                Pizza<span className="text-[#e60000]">Hub</span>{" "}
-                <span className="text-[10px] bg-red-950/80 border border-red-800/80 text-red-300 font-semibold px-2 py-0.5 rounded-full ml-1 uppercase tracking-wider">
-                  Partner Hub
-                </span>
+              <span className={`font-black text-xl tracking-tight block leading-tight ${isDark ? "text-white" : "text-[#0b2545]"}`}>
+                KHA<span className="text-[#e51b24]">OGE</span> KYA<span className="text-[#e51b24]">?</span>
               </span>
-              <span className={`text-[10px] font-medium ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
-                Restaurant Partner & Merchant Network
+              <span className={`text-[10px] font-bold tracking-wide uppercase ${isDark ? "text-[#ffde00]/90" : "text-[#e51b24]"}`}>
+                Good Food For Good Moments
               </span>
             </div>
           </Link>
@@ -232,75 +237,24 @@ export default function PlatformLandingPage() {
             {partnerLoggedIn ? (
               <Link
                 href="/admin"
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#e60000] px-4 py-2 text-xs font-bold text-white shadow-md shadow-red-500/25 hover:bg-[#cc0000] transition"
+                className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-[#e51b24] to-[#f58220] px-4 py-2 text-xs font-bold text-white shadow-md shadow-red-500/25 hover:opacity-95 transition"
               >
                 <LayoutDashboard className="h-3.5 w-3.5" />
                 <span>Partner Dashboard</span>
               </Link>
-            ) : superAdminLoggedIn ? (
-              <Link
-                href="/super-admin"
-                className="inline-flex items-center gap-1.5 rounded-full bg-purple-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-purple-600/30 hover:bg-purple-500 transition"
-              >
-                <ShieldCheck className="h-3.5 w-3.5" />
-                <span>Console</span>
-              </Link>
             ) : (
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setLoginMenuOpen(!loginMenuOpen)}
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition cursor-pointer ${
-                    isDark
-                      ? "border-neutral-800 bg-neutral-900/80 text-neutral-200 hover:bg-neutral-800"
-                      : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 shadow-sm"
-                  }`}
-                >
-                  <LogIn className="h-3.5 w-3.5 text-red-500" />
-                  <span>Login</span>
-                  <ChevronDown className={`h-3 w-3 transition-transform ${loginMenuOpen ? "rotate-180" : ""}`} />
-                </button>
-
-                {loginMenuOpen && (
-                  <div
-                    className={`absolute right-0 mt-2 w-56 rounded-2xl border p-2 shadow-2xl z-50 animate-in fade-in ${
-                      isDark ? "bg-[#0f1118] border-neutral-800 text-white" : "bg-white border-neutral-200 text-neutral-900"
-                    }`}
-                  >
-                    <Link
-                      href="/admin/login"
-                      onClick={() => setLoginMenuOpen(false)}
-                      className={`flex items-start gap-2.5 p-2.5 rounded-xl transition ${
-                        isDark ? "hover:bg-neutral-800/80" : "hover:bg-neutral-50"
-                      }`}
-                    >
-                      <div className="h-8 w-8 rounded-lg bg-red-500/15 text-[#e60000] flex items-center justify-center shrink-0 mt-0.5">
-                        <Store className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-xs">Partner Store Login</p>
-                        <p className="text-[10px] text-neutral-400">Manage orders, menu & store</p>
-                      </div>
-                    </Link>
-
-                    <Link
-                      href="/super-admin/login"
-                      onClick={() => setLoginMenuOpen(false)}
-                      className={`flex items-start gap-2.5 p-2.5 rounded-xl transition mt-1 border-t ${
-                        isDark ? "border-neutral-800/80 hover:bg-neutral-800/80" : "border-neutral-100 hover:bg-neutral-50"
-                      }`}
-                    >
-                      <div className="h-8 w-8 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center shrink-0 mt-0.5">
-                        <ShieldCheck className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-xs">Staff & Super Admin</p>
-                        <p className="text-[10px] text-neutral-400">Platform operations & management</p>
-                      </div>
-                    </Link>
-                  </div>
-                )}
-              </div>
+              <Link
+                href="/admin/login"
+                className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition shadow-xs ${
+                  isDark
+                    ? "border-neutral-800 bg-neutral-900/80 text-neutral-200 hover:bg-neutral-800"
+                    : "border-[#0b2545]/20 bg-white text-[#0b2545] hover:text-[#e51b24] hover:border-[#ffde00] hover:bg-[#ffde00]/15"
+                }`}
+                title="Partner Store Login"
+              >
+                <LogIn className="h-3.5 w-3.5 text-[#e51b24]" />
+                <span>Login</span>
+              </Link>
             )}
 
             <button
@@ -819,12 +773,22 @@ export default function PlatformLandingPage() {
       }`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#e60000] text-white">
-              <Pizza className="h-4 w-4" />
+            <div className="relative h-13 w-13 shrink-0 overflow-hidden rounded-full ring-2.5 ring-[#ffde00] bg-white shadow-sm">
+              <Image
+                src="/kya-khaugey.png"
+                alt="Khaoge Kya?"
+                fill
+                className="object-cover"
+                sizes="52px"
+              />
             </div>
             <div>
-              <p className={`font-extrabold text-sm ${isDark ? "text-white" : "text-neutral-900"}`}>PizzaHub Partner Hub</p>
-              <p className="text-[11px] text-neutral-400">Restaurant Partner & Merchant Platform</p>
+              <p className={`font-black text-sm ${isDark ? "text-white" : "text-[#0b2545]"}`}>
+                Khaoge <span className="text-[#e51b24]">Kya?</span>
+              </p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#ffde00]">
+                Good Food For Good Moments
+              </p>
             </div>
           </div>
 

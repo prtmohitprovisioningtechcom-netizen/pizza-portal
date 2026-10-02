@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { isAxiosError } from "axios";
 import { ArrowLeft, LayoutDashboard, ArrowRight } from "lucide-react";
 import { http } from "@/services/http";
@@ -99,13 +100,36 @@ export default function AdminLoginPage() {
         )}
 
         <div className="rounded-3xl border border-neutral-200 bg-white p-8 shadow-xl">
+        <div className="flex items-center gap-3.5 mb-6 pb-5 border-b border-neutral-100">
+          <div className="relative h-18 w-18 shrink-0 overflow-hidden rounded-full ring-3 ring-[#ffde00] bg-white shadow-lg">
+            <Image
+              src="/kya-khaugey.png"
+              alt="Khaoge Kya?"
+              fill
+              className="object-cover"
+              sizes="72px"
+              priority
+            />
+          </div>
+          <div>
+            <h1 className="font-navbar-brand text-2xl font-black text-[#0b2545] leading-tight">
+              KHA<span className="text-[#e51b24]">OGE</span> KYA<span className="text-[#e51b24]">?</span>
+            </h1>
+            <p className="text-[11px] font-bold text-[#e51b24] uppercase tracking-wider">
+              Partner Admin Portal
+            </p>
+          </div>
+        </div>
+
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-logo text-3xl text-[#e60000]">Admin Portal</h1>
-            <p className="mt-1 text-xs text-neutral-500">
+            <h2 className="text-base font-bold text-neutral-900">
+              {mode === "register" ? "Create Admin Account" : "Partner Sign In"}
+            </h2>
+            <p className="mt-0.5 text-xs text-neutral-500">
               {mode === "register"
-                ? "Create a new admin account"
-                : "Sign in to your admin account"}
+                ? "Setup your restaurant management login"
+                : "Manage your menu, orders and settings"}
             </p>
           </div>
           {canRegister && (

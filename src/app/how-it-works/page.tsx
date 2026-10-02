@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Pizza,
   Store,
@@ -41,18 +42,22 @@ export default function HowItWorksPage() {
       <header className={`sticky top-0 z-40 backdrop-blur-xl transition-colors border-b ${isDark ? "bg-[#0a0c10]/90 border-neutral-800/80" : "bg-white/90 border-neutral-200"}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-linear-to-tr from-[#e60000] to-orange-500 text-white shadow-lg shadow-red-500/25 group-hover:scale-105 transition">
-              <Pizza className="h-5 w-5" />
+            <div className="relative h-13 w-13 sm:h-15 sm:w-15 shrink-0 overflow-hidden rounded-full ring-2.5 ring-[#ffde00] bg-white shadow-md group-hover:scale-105 transition">
+              <Image
+                src="/kya-khaugey.png"
+                alt="Khaoge Kya?"
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 52px, 60px"
+                priority
+              />
             </div>
             <div>
-              <span className={`font-extrabold text-xl tracking-tight block leading-tight ${isDark ? "text-white" : "text-neutral-900"}`}>
-                Pizza<span className="text-[#e60000]">Hub</span>{" "}
-                <span className="text-[10px] bg-red-950/80 border border-red-800/80 text-red-300 font-semibold px-2 py-0.5 rounded-full ml-1 uppercase tracking-wider">
-                  Partner Hub
-                </span>
+              <span className={`font-black text-xl tracking-tight block leading-tight ${isDark ? "text-white" : "text-[#0b2545]"}`}>
+                KHA<span className="text-[#e51b24]">OGE</span> KYA<span className="text-[#e51b24]">?</span>
               </span>
-              <span className={`text-[10px] font-medium ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
-                Restaurant Partner & Merchant Network
+              <span className={`text-[10px] font-bold tracking-wide uppercase ${isDark ? "text-[#ffde00]/90" : "text-[#e51b24]"}`}>
+                Good Food For Good Moments
               </span>
             </div>
           </Link>
@@ -74,10 +79,6 @@ export default function HowItWorksPage() {
             </Link>
             <Link href="/faq" className="hover:text-red-500 transition">
               FAQs
-            </Link>
-            <Link href="/super-admin/login" className="text-purple-400 hover:text-purple-300 font-bold flex items-center gap-1">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              <span>Super Admin</span>
             </Link>
           </nav>
 

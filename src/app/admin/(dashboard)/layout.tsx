@@ -14,6 +14,7 @@ import {
   Store,
   KeyRound,
   ArrowLeft,
+  ShieldCheck,
 } from "lucide-react";
 import { AdminLogoutButton } from "@/components/layout/AdminLogoutButton";
 
@@ -134,6 +135,14 @@ export default function AdminDashboardLayout({
                 Logged in as: <span className="font-semibold text-neutral-800">@{adminInfo.username}</span>
               </div>
             )}
+            <Link
+              href="/super-admin/login"
+              className="mb-2.5 flex items-center gap-1.5 px-2 py-1 text-[11px] font-semibold text-purple-600 hover:text-purple-700 hover:underline transition"
+              title="Super Admin Management"
+            >
+              <ShieldCheck className="h-3.5 w-3.5" />
+              <span>Super Admin Console</span>
+            </Link>
             <AdminLogoutButton />
           </div>
         </aside>
